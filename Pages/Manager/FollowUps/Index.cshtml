@@ -1,0 +1,62 @@
+@page
+@model BanquetHall.Pages.Manager.FollowUps.IndexModel
+@{
+    Layout = "~/Pages/Shared/_ManagerLayout.cshtml";
+    ViewData["Title"] = "Follow-Ups";
+}
+
+<h3 class="mb-3">Active Follow-Ups</h3>
+
+<div class="card">
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-striped table-hover mb-0">
+                <thead>
+                    <tr>
+                        <th>Lead Date</th>
+                        <th>Function Date</th>
+                        <th>Name</th>
+                        <th>Phone</th>
+                        <th>Status</th>
+                        <th>Last Follow-Up</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model.Leads.Any())
+                    {
+                        @foreach (var lead in Model.Leads)
+                        {
+                            var badgeClass = lead.Status switch
+                            {
+                                "Success" => "bg-success",
+                                "Failed" => "bg-danger",
+                                "May Close" => "bg-info",
+                                "May Not Close" => "bg-warning text-dark",
+                                _ => "bg-secondary"
+                            };
+                            <tr>
+                                <td>@lead.LeadDate.ToString("dd-MMM-yyyy")</td>
+                                <td>@(lead.FunctionDate?.ToString("dd-MMM-yyyy") ?? "-")</td>
+                                <td>@lead.Name</td>
+                                <td>@lead.Phone</td>
+                                <td><span class="badge @badgeClass">@lead.Status</span></td>
+                                <td>@(lead.LastFollowUpDate?.ToString("dd-MMM-yyyy") ?? "-")</td>
+                                <td>
+                                    @if (lead.FollowUpId > 0)
+                                    {
+                                        <a asp-page="/Manager/FollowUps/Edit" asp-route-id="@lead.FollowUpId" class="btn btn-sm btn-primary">Follow Up</a>
+                                    }
+                                </td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr><td colspan="7" class="text-center text-muted py-4">No active follow-ups.</td></tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

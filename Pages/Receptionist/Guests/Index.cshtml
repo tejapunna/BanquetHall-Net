@@ -1,0 +1,41 @@
+@page
+@model BanquetHall.Pages.Receptionist.Guests.IndexModel
+@{
+    Layout = "~/Pages/Shared/_ReceptionistLayout.cshtml";
+    ViewData["Title"] = "Guest Search";
+}
+<h3>Guest Search</h3>
+<form method="get" class="mb-3">
+    <div class="input-group">
+        <input type="text" name="SearchTerm" value="@Model.SearchTerm" class="form-control" placeholder="Search by Name, Mobile, or Email..." />
+        <button type="submit" class="btn btn-success">Search</button>
+    </div>
+</form>
+
+@if (Model.SearchTerm != null && !Model.Guests.Any())
+{
+    <div class="alert alert-info">No results found for "@Model.SearchTerm"</div>
+}
+
+@if (Model.Guests.Any())
+{
+    <div class="table-responsive">
+        <table class="table table-striped">
+            <thead>
+                <tr><th>Name</th><th>Mobile</th><th>Email</th><th>Status</th><th>Actions</th></tr>
+            </thead>
+            <tbody>
+                @foreach (var guest in Model.Guests)
+                {
+                    <tr>
+                        <td>@guest.Name</td>
+                        <td>@guest.Mobile</td>
+                        <td>@guest.Email</td>
+                        <td>@guest.Status</td>
+                        <td><a asp-page="/Receptionist/Guests/Details" asp-route-id="@guest.Id" class="btn btn-sm btn-outline-success">View</a></td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}

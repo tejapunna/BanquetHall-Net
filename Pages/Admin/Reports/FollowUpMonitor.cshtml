@@ -1,0 +1,91 @@
+@page
+@model BanquetHall.Pages.Admin.Reports.FollowUpMonitorModel
+@{
+    ViewData["Title"] = "Follow-Up Monitor";
+    Layout = "~/Pages/Shared/_AdminLayout.cshtml";
+}
+
+<h2>Follow-Up Monitor</h2>
+
+<form method="get" class="row g-3 mb-4">
+    <div class="col-12 col-md-3">
+        <label asp-for="MonitorDate" class="form-label">Date</label>
+        <input asp-for="MonitorDate" type="date" class="form-control" />
+    </div>
+    <div class="col-12 col-md-3 d-flex align-items-end">
+        <button type="submit" class="btn btn-primary">View</button>
+    </div>
+</form>
+
+@if (Model.MonitorData.Any())
+{
+    @foreach (var manager in Model.MonitorData)
+    {
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5 class="mb-0">@manager.ManagerName</h5>
+            </div>
+            <div class="card-body">
+                <p><strong>Follow-Ups Updated:</strong> @manager.FollowUpsUpdatedToday</p>
+
+                @if (manager.ContactedGuests.Any())
+                {
+                    <h6>Contacted Guests</h6>
+                    <div class="table-responsive">
+                        <table class="table table-sm">
+                            <thead>
+                                <tr>
+                                    <th>Guest ID</th>
+                                    <th>Guest Name</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var guest in manager.ContactedGuests)
+                                {
+                                    <tr>
+                                        <td>@guest.GuestId</td>
+                                        <td>@guest.GuestName</td>
+                                        <td>@guest.FollowupStatus</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                }
+
+                @if (manager.UpcomingFollowUps.Any())
+                {
+                    <h6>Upcoming Follow-Ups</h6>
+                    <div class="table-responsive">
+                        <table class="table table-sm">
+                            <thead>
+                                <tr>
+                                    <th>Follow-Up ID</th>
+                                    <th>Guest Name</th>
+                                    <th>Date</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var fu in manager.UpcomingFollowUps)
+                                {
+                                    <tr>
+                                        <td>@fu.FollowUpId</td>
+                                        <td>@fu.GuestName</td>
+                                        <td>@fu.FollowupDate.ToString("dd-MMM-yyyy")</td>
+                                        <td>@fu.Status</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                }
+            </div>
+        </div>
+    }
+}
+else
+{
+    <div class="alert alert-info">No follow-up data found for the selected date.</div>
+}

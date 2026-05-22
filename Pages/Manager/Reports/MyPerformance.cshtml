@@ -1,0 +1,135 @@
+@page
+@model BanquetHall.Pages.Manager.Reports.MyPerformanceModel
+@{
+    Layout = "~/Pages/Shared/_ManagerLayout.cshtml";
+    ViewData["Title"] = "My Reports";
+}
+
+<h3 class="mb-4">My Performance & History</h3>
+
+@* Stats Cards *@
+<div class="row mb-4">
+    <div class="col-6 col-md-3 mb-3">
+        <div class="card text-white bg-primary">
+            <div class="card-body text-center">
+                <h3>@Model.FollowUpCount</h3>
+                <small>Total Follow-Ups</small>
+            </div>
+        </div>
+    </div>
+    <div class="col-6 col-md-3 mb-3">
+        <div class="card text-white bg-success">
+            <div class="card-body text-center">
+                <h3>@Model.SuccessfulLeads</h3>
+                <small>Successful</small>
+            </div>
+        </div>
+    </div>
+    <div class="col-6 col-md-3 mb-3">
+        <div class="card text-white bg-danger">
+            <div class="card-body text-center">
+                <h3>@Model.FailedLeads</h3>
+                <small>Failed</small>
+            </div>
+        </div>
+    </div>
+    <div class="col-6 col-md-3 mb-3">
+        <div class="card text-white bg-info">
+            <div class="card-body text-center">
+                <h3>₹@Model.TotalRevenue.ToString("N0")</h3>
+                <small>Total Revenue</small>
+            </div>
+        </div>
+    </div>
+</div>
+
+@* Tabs for History *@
+<ul class="nav nav-tabs" id="historyTabs" role="tablist">
+    <li class="nav-item" role="presentation">
+        <button class="nav-link active" id="bookings-tab" data-bs-toggle="tab" data-bs-target="#bookings" type="button" role="tab">Booking History (@Model.BookingHistory.Count)</button>
+    </li>
+    <li class="nav-item" role="presentation">
+        <button class="nav-link" id="followups-tab" data-bs-toggle="tab" data-bs-target="#followups" type="button" role="tab">Follow-Up History (@Model.FollowUpHistory.Count)</button>
+    </li>
+</ul>
+
+<div class="tab-content mt-3" id="historyTabContent">
+    @* Booking History Tab *@
+    <div class="tab-pane fade show active" id="bookings" role="tabpanel">
+        @if (Model.BookingHistory.Any())
+        {
+            <div class="table-responsive">
+                <table class="table table-striped table-hover">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>Guest</th>
+                            <th>Function Type</th>
+                            <th>Function Date</th>
+                            <th>Meal Plan</th>
+                            <th>Address</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var booking in Model.BookingHistory)
+                        {
+                            <tr>
+                                <td><a asp-page="/Manager/Booking/Details" asp-route-id="@booking.Id" class="text-decoration-none text-purple fw-semibold">@booking.Guest?.Name</a></td>
+                                <td><span class="badge bg-primary">@booking.FunctionType</span></td>
+                                <td>@booking.FunctionDate.ToString("dd-MMM-yyyy")</td>
+                                <td>@booking.MealPlan</td>
+                                <td>@booking.GuestAddress</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+        else
+        {
+            <div class="alert alert-info">No booking history found.</div>
+        }
+    </div>
+
+    @* Follow-Up History Tab *@
+    <div class="tab-pane fade" id="followups" role="tabpanel">
+        @if (Model.FollowUpHistory.Any())
+        {
+            <div class="table-responsive">
+                <table class="table table-striped table-hover">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>Guest</th>
+                            <th>Status</th>
+                            <th>Follow-up Status</th>
+                            <th>Date</th>
+                            <th>Remarks</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var fu in Model.FollowUpHistory)
+                        {
+                            var badgeClass = fu.FollowupStatus switch
+                            {
+                                "Success" => "bg-success",
+                                "Failed" => "bg-danger",
+                                "May Close" => "bg-info",
+                                _ => "bg-warning text-dark"
+                            };
+                            <tr>
+                                <td>@fu.Guest?.Name</td>
+                                <td><span class="badge bg-secondary">@fu.Status</span></td>
+                                <td><span class="badge @badgeClass">@fu.FollowupStatus</span></td>
+                                <td>@fu.FollowupDate.ToString("dd-MMM-yyyy")</td>
+                                <td>@(fu.Remarks?.Length > 50 ? fu.Remarks[..50] + "..." : fu.Remarks)</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+        else
+        {
+            <div class="alert alert-info">No follow-up history found.</div>
+        }
+    </div>
+</div>

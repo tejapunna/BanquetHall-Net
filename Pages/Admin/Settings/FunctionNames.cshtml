@@ -1,0 +1,155 @@
+@page
+@model BanquetHall.Pages.Admin.Settings.FunctionNamesModel
+@{
+    Layout = "~/Pages/Shared/_AdminLayout.cshtml";
+    ViewData["Title"] = "Manage Function Names";
+}
+
+<h3 class="mb-3">Function Names</h3>
+
+<div class="card mb-4">
+    <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+        <span>Function Names</span>
+        <button class="btn btn-sm btn-light" data-bs-toggle="modal" data-bs-target="#addModal">+ Add New</button>
+    </div>
+    <div class="card-body p-0">
+        <table class="table table-striped mb-0">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Sort Order</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody id="itemsTable">
+                @foreach (var item in Model.Items)
+                {
+                    <tr data-id="@item.Id">
+                        <td class="item-name">@item.Name</td>
+                        <td class="item-sort">@item.SortOrder</td>
+                        <td>
+                            <span class="badge @(item.IsActive ? "bg-success" : "bg-secondary") item-status">
+                                @(item.IsActive ? "Active" : "Inactive")
+                            </span>
+                        </td>
+                        <td>
+                            <button class="btn btn-sm btn-outline-primary btn-edit" data-id="@item.Id" data-name="@item.Name" data-sort="@item.SortOrder">Edit</button>
+                            <button class="btn btn-sm @(item.IsActive ? "btn-outline-warning" : "btn-outline-success") btn-toggle" data-id="@item.Id">
+                                @(item.IsActive ? "Deactivate" : "Activate")
+                            </button>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Add Modal -->
+<div class="modal fade" id="addModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Add Function Name</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="mb-3">
+                    <label class="form-label">Name <span class="text-danger">*</span></label>
+                    <input type="text" id="addName" class="form-control" required />
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Sort Order</label>
+                    <input type="number" id="addSortOrder" class="form-control" value="0" />
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-primary" id="btnAdd">Save</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Edit Modal -->
+<div class="modal fade" id="editModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Edit Function Name</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="editId" />
+                <div class="mb-3">
+                    <label class="form-label">Name <span class="text-danger">*</span></label>
+                    <input type="text" id="editName" class="form-control" required />
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Sort Order</label>
+                    <input type="number" id="editSortOrder" class="form-control" value="0" />
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-primary" id="btnUpdate">Update</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+<script>
+$(document).ready(function() {
+    $('#btnAdd').on('click', function() {
+        var data = { name: $('#addName').val(), sortOrder: parseInt($('#addSortOrder').val()) || 0 };
+        $.ajax({
+            url: '?handler=Create',
+            type: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify(data),
+            success: function(res) {
+                if (res.success) { location.reload(); }
+                else { alert(res.error); }
+            }
+        });
+    });
+
+    $(document).on('click', '.btn-edit', function() {
+        $('#editId').val($(this).data('id'));
+        $('#editName').val($(this).data('name'));
+        $('#editSortOrder').val($(this).data('sort'));
+        new bootstrap.Modal(document.getElementById('editModal')).show();
+    });
+
+    $('#btnUpdate').on('click', function() {
+        var data = { id: parseInt($('#editId').val()), name: $('#editName').val(), sortOrder: parseInt($('#editSortOrder').val()) || 0 };
+        $.ajax({
+            url: '?handler=Update',
+            type: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify(data),
+            success: function(res) {
+                if (res.success) { location.reload(); }
+                else { alert(res.error); }
+            }
+        });
+    });
+
+    $(document).on('click', '.btn-toggle', function() {
+        var id = $(this).data('id');
+        $.ajax({
+            url: '?handler=ToggleActive',
+            type: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify({ id: id }),
+            success: function(res) {
+                if (res.success) { location.reload(); }
+                else { alert(res.error); }
+            }
+        });
+    });
+});
+</script>
+}

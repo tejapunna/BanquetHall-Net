@@ -1,0 +1,115 @@
+@page
+@model BanquetHall.Pages.Admin.Payments.IndexModel
+@{
+    Layout = "~/Pages/Shared/_AdminLayout.cshtml";
+    ViewData["Title"] = "Payments Overview";
+}
+
+<h3 class="mb-4">Payments Overview</h3>
+
+<div class="row mb-4">
+    <div class="col-12 col-md-4 mb-3">
+        <div class="card text-white bg-primary">
+            <div class="card-body">
+                <h6 class="card-title">Total Revenue</h6>
+                <h4>₹@Model.TotalRevenue.ToString("N2")</h4>
+            </div>
+        </div>
+    </div>
+    <div class="col-12 col-md-4 mb-3">
+        <div class="card text-white bg-warning">
+            <div class="card-body">
+                <h6 class="card-title">Total Pending</h6>
+                <h4>₹@Model.TotalPending.ToString("N2")</h4>
+            </div>
+        </div>
+    </div>
+    <div class="col-12 col-md-4 mb-3">
+        <div class="card text-white bg-success">
+            <div class="card-body">
+                <h6 class="card-title">Total Collected</h6>
+                <h4>₹@Model.TotalCollected.ToString("N2")</h4>
+            </div>
+        </div>
+    </div>
+</div>
+
+<h5 class="mb-3">Pending Payments</h5>
+@if (Model.PendingPayments.Any())
+{
+    <div class="table-responsive mb-4">
+        <table class="table table-striped table-hover">
+            <thead class="table-dark">
+                <tr>
+                    <th>Guest Name</th>
+                    <th>Function Type</th>
+                    <th>Function Date</th>
+                    <th>Amount</th>
+                    <th>Advance</th>
+                    <th>Remaining</th>
+                    <th>Payment Type</th>
+                    <th>Date</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var p in Model.PendingPayments)
+                {
+                    <tr>
+                        <td>@(p.Guest?.Name ?? "-")</td>
+                        <td>@(p.Function?.FunctionType ?? "-")</td>
+                        <td>@(p.Function?.FunctionDate.ToString("dd-MMM-yyyy") ?? "-")</td>
+                        <td>₹@p.Amount.ToString("N2")</td>
+                        <td>₹@p.AdvanceAmount.ToString("N2")</td>
+                        <td class="text-danger fw-bold">₹@p.RemainingAmount.ToString("N2")</td>
+                        <td>@p.PaymentType</td>
+                        <td>@p.CreatedAt.ToString("dd-MMM-yyyy")</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}
+else
+{
+    <div class="alert alert-success mb-4">No pending payments.</div>
+}
+
+<h5 class="mb-3">Completed Payments</h5>
+@if (Model.CompletedPayments.Any())
+{
+    <div class="table-responsive">
+        <table class="table table-striped table-hover">
+            <thead class="table-dark">
+                <tr>
+                    <th>Guest Name</th>
+                    <th>Function Type</th>
+                    <th>Function Date</th>
+                    <th>Amount</th>
+                    <th>Advance</th>
+                    <th>Remaining</th>
+                    <th>Payment Type</th>
+                    <th>Date</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var p in Model.CompletedPayments)
+                {
+                    <tr>
+                        <td>@(p.Guest?.Name ?? "-")</td>
+                        <td>@(p.Function?.FunctionType ?? "-")</td>
+                        <td>@(p.Function?.FunctionDate.ToString("dd-MMM-yyyy") ?? "-")</td>
+                        <td>₹@p.Amount.ToString("N2")</td>
+                        <td>₹@p.AdvanceAmount.ToString("N2")</td>
+                        <td>₹@p.RemainingAmount.ToString("N2")</td>
+                        <td>@p.PaymentType</td>
+                        <td>@p.CreatedAt.ToString("dd-MMM-yyyy")</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}
+else
+{
+    <div class="alert alert-info">No completed payments yet.</div>
+}

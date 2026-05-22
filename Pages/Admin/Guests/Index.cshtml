@@ -1,0 +1,58 @@
+@page
+@model BanquetHall.Pages.Admin.Guests.IndexModel
+@{
+    Layout = "~/Pages/Shared/_AdminLayout.cshtml";
+    ViewData["Title"] = "All Guests";
+}
+
+<h3 class="mb-4">All Guests</h3>
+
+<form method="get" class="row mb-4">
+    <div class="col-12 col-md-6 col-lg-4 mb-2">
+        <div class="input-group">
+            <input type="text" class="form-control" asp-for="SearchTerm" placeholder="Search by name, mobile, or email..." />
+            <button type="submit" class="btn btn-primary">Search</button>
+            @if (!string.IsNullOrWhiteSpace(Model.SearchTerm))
+            {
+                <a asp-page="/Admin/Guests/Index" class="btn btn-outline-secondary">Clear</a>
+            }
+        </div>
+    </div>
+</form>
+
+@if (Model.Guests.Any())
+{
+    <div class="table-responsive">
+        <table class="table table-striped table-hover">
+            <thead class="table-dark">
+                <tr>
+                    <th>Name</th>
+                    <th>Mobile</th>
+                    <th>Email</th>
+                    <th>Status</th>
+                    <th>Created</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var guest in Model.Guests)
+                {
+                    <tr>
+                        <td>@guest.Name</td>
+                        <td>@guest.Mobile</td>
+                        <td>@(guest.Email ?? "-")</td>
+                        <td><span class="badge bg-info">@(guest.Status ?? "N/A")</span></td>
+                        <td>@guest.CreatedAt.ToString("dd-MMM-yyyy")</td>
+                        <td>
+                            <a asp-page="/Admin/Guests/Details" asp-route-id="@guest.Id" class="btn btn-sm btn-outline-primary">View Details</a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}
+else
+{
+    <div class="alert alert-info">No guests found.</div>
+}

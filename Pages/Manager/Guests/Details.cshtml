@@ -1,0 +1,116 @@
+@page "{id:int}"
+@model BanquetHall.Pages.Manager.Guests.DetailsModel
+@{
+    Layout = "~/Pages/Shared/_ManagerLayout.cshtml";
+    ViewData["Title"] = "Guest Details";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h3>Guest Details</h3>
+    <div class="d-flex gap-2">
+        <a asp-page="/Manager/Guests/Edit" asp-route-id="@Model.Guest.Id" class="btn btn-outline-primary btn-sm">Edit</a>
+        <button onclick="window.print()" class="btn btn-outline-secondary btn-sm">Print</button>
+        <a asp-page="/Manager/Guests/Index" class="btn btn-secondary btn-sm">Back</a>
+    </div>
+</div>
+
+<div class="card mb-4">
+    <div class="card-header"><strong>Guest Information</strong></div>
+    <div class="card-body">
+        <div class="row">
+            <div class="col-12 col-md-4 mb-2"><div class="detail-label">Name</div><div class="detail-value">@(Model.Guest.FirstName ?? Model.Guest.Name) @(Model.Guest.LastName)</div></div>
+            <div class="col-12 col-md-4 mb-2"><div class="detail-label">Mobile</div><div class="detail-value">@Model.Guest.Mobile</div></div>
+            <div class="col-12 col-md-4 mb-2"><div class="detail-label">Email</div><div class="detail-value">@(Model.Guest.Email ?? "—")</div></div>
+            <div class="col-12 col-md-4 mb-2"><div class="detail-label">Village</div><div class="detail-value">@(Model.Guest.Village ?? "—")</div></div>
+            <div class="col-12 col-md-4 mb-2"><div class="detail-label">Mandal</div><div class="detail-value">@(Model.Guest.Mandal ?? "—")</div></div>
+            <div class="col-12 col-md-4 mb-2"><div class="detail-label">Referred By</div><div class="detail-value">@(Model.Guest.ReferredByName ?? "—") @(Model.Guest.ReferredByPhone != null ? $"({Model.Guest.ReferredByPhone})" : "")</div></div>
+            <div class="col-12 col-md-4 mb-2"><div class="detail-label">Aadhaar</div><div class="detail-value">@(Model.Guest.GuestAadhaar ?? "—")</div></div>
+            <div class="col-12 col-md-4 mb-2"><div class="detail-label">PAN</div><div class="detail-value">@(Model.Guest.GuestPan ?? "—")</div></div>
+            <div class="col-12 col-md-4 mb-2"><div class="detail-label">Status</div><div class="detail-value"><span class="badge bg-info">@(Model.Guest.Status ?? "New")</span></div></div>
+            <div class="col-12 col-md-4 mb-2"><div class="detail-label">Created By</div><div class="detail-value">@(Model.InitiatedByManager ?? "—")</div></div>
+            <div class="col-12 col-md-4 mb-2"><div class="detail-label">Current Manager</div><div class="detail-value">@(Model.AssignedManagerName ?? "—")</div></div>
+            @if (!string.IsNullOrEmpty(Model.Guest.Remarks))
+            {
+                <div class="col-12 mb-2"><div class="detail-label">Remarks</div><div class="detail-value">@Model.Guest.Remarks</div></div>
+            }
+        </div>
+    </div>
+</div>
+
+@if (Model.LatestFunction != null)
+{
+    <div class="card mb-4">
+        <div class="card-header"><strong>Function Details</strong></div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-12 col-md-4 mb-2"><div class="detail-label">Function Name</div><div class="detail-value">@(Model.FunctionNameText ?? Model.LatestFunction.FunctionType ?? "—")</div></div>
+                <div class="col-12 col-md-4 mb-2"><div class="detail-label">Function Date</div><div class="detail-value">@Model.LatestFunction.FunctionDate.ToString("dd-MMM-yyyy")</div></div>
+                <div class="col-12 col-md-4 mb-2"><div class="detail-label">Function Hall</div><div class="detail-value">@(Model.FunctionHallText ?? "—")</div></div>
+                <div class="col-12 col-md-4 mb-2"><div class="detail-label">Meal Type</div><div class="detail-value">@(Model.LatestFunction.MealType ?? "—")</div></div>
+                <div class="col-12 col-md-4 mb-2"><div class="detail-label">Meal Plan</div><div class="detail-value">@(Model.LatestFunction.MealPlan ?? "—")</div></div>
+                <div class="col-12 col-md-4 mb-2"><div class="detail-label">Packs</div><div class="detail-value">@Model.LatestFunction.NoOfPacks (Guaranteed: @Model.LatestFunction.GuaranteedPacks)</div></div>
+                <div class="col-12 col-md-4 mb-2"><div class="detail-label">Assigned Manager</div><div class="detail-value">@(Model.AssignedManagerName ?? "—")</div></div>
+                <div class="col-12 col-md-4 mb-2"><div class="detail-label">Initiated By</div><div class="detail-value">@(Model.LatestFunction.InitiatedBy ?? "—")</div></div>
+                @if (!string.IsNullOrEmpty(Model.LatestFunction.GuestAddress))
+                {
+                    <div class="col-12 mb-2"><div class="detail-label">Address</div><div class="detail-value">@Model.LatestFunction.GuestAddress</div></div>
+                }
+                @if (!string.IsNullOrEmpty(Model.LatestFunction.SpecialInstruction))
+                {
+                    <div class="col-12 mb-2"><div class="detail-label">Special Instructions</div><div class="detail-value">@Model.LatestFunction.SpecialInstruction</div></div>
+                }
+            </div>
+        </div>
+    </div>
+}
+
+@if (Model.Payments.Any())
+{
+    <div class="card mb-4">
+        <div class="card-header"><strong>Payments</strong></div>
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-striped mb-0">
+                    <thead><tr><th>Amount</th><th>Advance</th><th>Remaining</th><th>Type</th><th>Date</th></tr></thead>
+                    <tbody>
+                        @foreach (var p in Model.Payments)
+                        {
+                            <tr>
+                                <td>₹@p.Amount.ToString("N2")</td>
+                                <td>₹@p.AdvanceAmount.ToString("N2")</td>
+                                <td class="@(p.RemainingAmount > 0 ? "text-danger fw-bold" : "")">₹@p.RemainingAmount.ToString("N2")</td>
+                                <td>@p.PaymentType</td>
+                                <td>@p.CreatedAt.ToString("dd-MMM-yyyy")</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+}
+
+@if (Model.FollowUps.Any())
+{
+    <div class="card">
+        <div class="card-header"><strong>Follow-Up History</strong></div>
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-striped mb-0">
+                    <thead><tr><th>Date</th><th>Status</th><th>Manager</th><th>Remarks</th></tr></thead>
+                    <tbody>
+                        @foreach (var fu in Model.FollowUps)
+                        {
+                            <tr>
+                                <td>@fu.UpdatedAt.ToString("dd-MMM-yyyy")</td>
+                                <td><span class="badge bg-info">@fu.FollowupStatus</span></td>
+                                <td>@(fu.Manager?.FullName ?? "—")</td>
+                                <td>@(fu.Remarks ?? "—")</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+}

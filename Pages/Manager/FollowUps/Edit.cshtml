@@ -1,0 +1,151 @@
+@page "{id:int}"
+@model BanquetHall.Pages.Manager.FollowUps.EditModel
+@{
+    Layout = "~/Pages/Shared/_ManagerLayout.cshtml";
+    ViewData["Title"] = "Follow-Up";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h3>Follow-Up</h3>
+    <a asp-page="/Manager/FollowUps/Index" class="btn btn-secondary btn-sm">Back to Follow-Ups</a>
+</div>
+
+@if (!string.IsNullOrEmpty(Model.SuccessMessage))
+{
+    <div class="alert alert-success alert-dismissible fade show">
+        @Model.SuccessMessage
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+}
+@if (!string.IsNullOrEmpty(Model.ErrorMessage))
+{
+    <div class="alert alert-danger">@Model.ErrorMessage</div>
+}
+
+<!-- Row 1: Function Details (left) | Guest Info + Follow-Up Form (right) -->
+<div class="row mb-4">
+    <!-- Left: Function Details -->
+    <div class="col-12 col-lg-6 mb-3">
+        @if (Model.LatestFunction != null)
+        {
+            <div class="card h-100">
+                <div class="card-header"><strong>Function Details</strong></div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-6 mb-2"><div class="detail-label">Function Name</div><div class="detail-value">@(Model.FunctionNameText ?? "—")</div></div>
+                        <div class="col-6 mb-2"><div class="detail-label">Function Date</div><div class="detail-value">@Model.LatestFunction.FunctionDate.ToString("dd-MMM-yyyy")</div></div>
+                        <div class="col-6 mb-2"><div class="detail-label">Function Hall</div><div class="detail-value">@(Model.FunctionHallText ?? "—")</div></div>
+                        <div class="col-6 mb-2"><div class="detail-label">Meal Type</div><div class="detail-value">@(Model.LatestFunction.MealType ?? "—")</div></div>
+                        <div class="col-6 mb-2"><div class="detail-label">Meal Plan</div><div class="detail-value">@(Model.LatestFunction.MealPlan ?? "—")</div></div>
+                        <div class="col-6 mb-2"><div class="detail-label">Packs</div><div class="detail-value">@Model.LatestFunction.NoOfPacks (G: @Model.LatestFunction.GuaranteedPacks)</div></div>
+                        <div class="col-6 mb-2"><div class="detail-label">Assigned Manager</div><div class="detail-value">@(Model.AssignedManagerName ?? "—")</div></div>
+                        <div class="col-6 mb-2"><div class="detail-label">Initiated By</div><div class="detail-value">@(Model.LatestFunction.InitiatedBy ?? "—")</div></div>
+                        @if (!string.IsNullOrEmpty(Model.LatestFunction.SpecialInstruction))
+                        {
+                            <div class="col-12 mb-2"><div class="detail-label">Special Instructions</div><div class="detail-value">@Model.LatestFunction.SpecialInstruction</div></div>
+                        }
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+
+    <!-- Right: Guest Info (top) + Follow-Up Form (bottom) -->
+    <div class="col-12 col-lg-6 mb-3">
+        <!-- Guest Information -->
+        @if (Model.Guest != null)
+        {
+            <div class="card mb-3">
+                <div class="card-header"><strong>Guest Information</strong></div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-6 mb-2"><div class="detail-label">Name</div><div class="detail-value">@(Model.Guest.FirstName) @(Model.Guest.LastName)</div></div>
+                        <div class="col-6 mb-2"><div class="detail-label">Mobile</div><div class="detail-value">@Model.Guest.Mobile</div></div>
+                        <div class="col-6 mb-2"><div class="detail-label">Email</div><div class="detail-value">@(Model.Guest.Email ?? "—")</div></div>
+                        <div class="col-6 mb-2"><div class="detail-label">Village</div><div class="detail-value">@(Model.Guest.Village ?? "—")</div></div>
+                        <div class="col-6 mb-2"><div class="detail-label">Mandal</div><div class="detail-value">@(Model.Guest.Mandal ?? "—")</div></div>
+                        <div class="col-6 mb-2"><div class="detail-label">Referred By</div><div class="detail-value">@(Model.Guest.ReferredByName ?? "—")</div></div>
+                    </div>
+                </div>
+            </div>
+        }
+
+        <!-- Update Follow-Up Form -->
+        <div class="card">
+            <div class="card-header"><strong>Update Follow-Up</strong></div>
+            <div class="card-body">
+                <form method="post" asp-route-id="@Model.FollowUpId">
+                    <div class="row">
+                        <div class="col-12 col-md-6 mb-3">
+                            <label class="form-label">Follow-Up Status *</label>
+                            <select asp-for="Input.FollowupStatus" class="form-select">
+                                <option value="">-- Select --</option>
+                                <option value="May Close">May Close</option>
+                                <option value="May Not Close">May Not Close</option>
+                                <option value="Success">Success</option>
+                                <option value="Failed">Failed</option>
+                            </select>
+                        </div>
+                        <div class="col-12 col-md-6 mb-3">
+                            <label class="form-label">Next Follow-Up Date *</label>
+                            <input asp-for="Input.NextFollowupDate" type="date" class="form-control" />
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Remarks</label>
+                        <textarea asp-for="Input.Remarks" class="form-control" rows="2" placeholder="Enter follow-up notes..."></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100">Save Follow-Up</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Row 2: Follow-Up History (full width) -->
+<div class="card">
+    <div class="card-header"><strong>Follow-Up History</strong></div>
+    <div class="card-body p-0">
+        @if (Model.FollowUpHistory.Any())
+        {
+            <div class="table-responsive">
+                <table class="table table-striped mb-0">
+                    <thead>
+                        <tr>
+                            <th>Last Followup Date</th>
+                            <th>Status</th>
+                            <th>Next Follow-Up</th>
+                            <th>Remarks</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var fu in Model.FollowUpHistory)
+                        {
+                            var badgeClass = fu.FollowupStatus switch
+                            {
+                                "Success" => "bg-success",
+                                "Failed" => "bg-danger",
+                                "May Close" => "bg-info",
+                                _ => "bg-warning text-dark"
+                            };
+                            <tr>
+                                <td>@fu.UpdatedAt.ToString("dd-MMM-yyyy hh:mm tt")</td>
+                                <td><span class="badge @badgeClass">@fu.FollowupStatus</span></td>
+                                <td>@fu.FollowupDate.ToString("dd-MMM-yyyy")</td>
+                                <td>@(fu.Remarks ?? "—")</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+        else
+        {
+            <div class="p-3 text-muted">No follow-up history yet.</div>
+        }
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

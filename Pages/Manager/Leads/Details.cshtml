@@ -1,0 +1,77 @@
+@page "{id:int}"
+@model BanquetHall.Pages.Manager.Leads.DetailsModel
+@{
+    Layout = "~/Pages/Shared/_ManagerLayout.cshtml";
+    ViewData["Title"] = "Lead Details";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h3>Lead Details</h3>
+    <div class="d-flex gap-2">
+        <a asp-page="/Manager/Leads/Edit" asp-route-id="@Model.Guest.Id" class="btn btn-outline-primary btn-sm">Edit</a>
+        <button onclick="window.print()" class="btn btn-outline-secondary btn-sm">Print</button>
+        <a asp-page="/Manager/Leads/Index" class="btn btn-secondary btn-sm">Back</a>
+    </div>
+</div>
+
+<div class="card mb-4">
+    <div class="card-header"><strong>Guest Information</strong></div>
+    <div class="card-body">
+        <div class="row">
+            <div class="col-12 col-md-4 mb-3"><div class="detail-label">Name</div><div class="detail-value">@(Model.Guest.FirstName) @(Model.Guest.LastName)</div></div>
+            <div class="col-12 col-md-4 mb-3"><div class="detail-label">Mobile</div><div class="detail-value">@Model.Guest.Mobile</div></div>
+            <div class="col-12 col-md-4 mb-3"><div class="detail-label">Email</div><div class="detail-value">@(Model.Guest.Email ?? "—")</div></div>
+            <div class="col-12 col-md-4 mb-3"><div class="detail-label">Village</div><div class="detail-value">@(Model.Guest.Village ?? "—")</div></div>
+            <div class="col-12 col-md-4 mb-3"><div class="detail-label">Mandal</div><div class="detail-value">@(Model.Guest.Mandal ?? "—")</div></div>
+            <div class="col-12 col-md-4 mb-3"><div class="detail-label">Referred By</div><div class="detail-value">@(Model.Guest.ReferredByName ?? "—")</div></div>
+            <div class="col-12 col-md-4 mb-3"><div class="detail-label">Aadhaar</div><div class="detail-value">@(Model.Guest.GuestAadhaar ?? "—")</div></div>
+            <div class="col-12 col-md-4 mb-3"><div class="detail-label">PAN</div><div class="detail-value">@(Model.Guest.GuestPan ?? "—")</div></div>
+            <div class="col-12 col-md-4 mb-3"><div class="detail-label">Status</div><div class="detail-value"><span class="badge bg-info">@(Model.Guest.Status ?? "New")</span></div></div>
+            @if (!string.IsNullOrEmpty(Model.Guest.Remarks))
+            {
+                <div class="col-12 mb-3"><div class="detail-label">Remarks</div><div class="detail-value">@Model.Guest.Remarks</div></div>
+            }
+        </div>
+    </div>
+</div>
+
+@if (Model.LatestFunction != null)
+{
+    <div class="card mb-4">
+        <div class="card-header"><strong>Function Details</strong></div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-12 col-md-4 mb-3"><div class="detail-label">Function Name</div><div class="detail-value">@(Model.FunctionNameText ?? "—")</div></div>
+                <div class="col-12 col-md-4 mb-3"><div class="detail-label">Function Date</div><div class="detail-value">@Model.LatestFunction.FunctionDate.ToString("dd-MMM-yyyy")</div></div>
+                <div class="col-12 col-md-4 mb-3"><div class="detail-label">Function Hall</div><div class="detail-value">@(Model.FunctionHallText ?? "—")</div></div>
+                <div class="col-12 col-md-4 mb-3"><div class="detail-label">Meal Type</div><div class="detail-value">@(Model.LatestFunction.MealType ?? "—")</div></div>
+                <div class="col-12 col-md-4 mb-3"><div class="detail-label">Meal Plan</div><div class="detail-value">@(Model.LatestFunction.MealPlan ?? "—")</div></div>
+                <div class="col-12 col-md-4 mb-3"><div class="detail-label">No. of Packs</div><div class="detail-value">@Model.LatestFunction.NoOfPacks</div></div>
+                <div class="col-12 col-md-4 mb-3"><div class="detail-label">Guaranteed Packs</div><div class="detail-value">@Model.LatestFunction.GuaranteedPacks</div></div>
+                <div class="col-12 col-md-4 mb-3"><div class="detail-label">Assigned Manager</div><div class="detail-value">@(Model.AssignedManagerName ?? "—")</div></div>
+                @if (!string.IsNullOrEmpty(Model.LatestFunction.SpecialInstruction))
+                {
+                    <div class="col-12 mb-3"><div class="detail-label">Special Instructions</div><div class="detail-value">@Model.LatestFunction.SpecialInstruction</div></div>
+                }
+            </div>
+        </div>
+    </div>
+}
+
+@if (Model.LatestFollowUp != null)
+{
+    <div class="card mb-4">
+        <div class="card-header"><strong>Latest Follow-Up</strong></div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-12 col-md-4 mb-3"><div class="detail-label">Status</div><div class="detail-value"><span class="badge bg-secondary">@Model.LatestFollowUp.Status</span></div></div>
+                <div class="col-12 col-md-4 mb-3"><div class="detail-label">Follow-Up Status</div><div class="detail-value"><span class="badge bg-info">@Model.LatestFollowUp.FollowupStatus</span></div></div>
+                <div class="col-12 col-md-4 mb-3"><div class="detail-label">Date</div><div class="detail-value">@Model.LatestFollowUp.FollowupDate.ToString("dd-MMM-yyyy")</div></div>
+                @if (!string.IsNullOrEmpty(Model.LatestFollowUp.Remarks))
+                {
+                    <div class="col-12 mb-3"><div class="detail-label">Remarks</div><div class="detail-value">@Model.LatestFollowUp.Remarks</div></div>
+                }
+            </div>
+        </div>
+    </div>
+}

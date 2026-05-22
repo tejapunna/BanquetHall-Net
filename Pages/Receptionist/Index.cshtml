@@ -1,0 +1,15 @@
+@page
+@model BanquetHall.Pages.Receptionist.IndexModel
+@{
+    Layout = "~/Pages/Shared/_ReceptionistLayout.cshtml";
+    ViewData["Title"] = "Receptionist Dashboard";
+}
+<h3>Welcome, @Model.ReceptionistName</h3>
+<p class="text-muted">Search and view guest information</p>
+<div class="card">
+    <div class="card-body">
+        <a asp-page="/Receptionist/Guests/Index" class="btn btn-success btn-lg">
+            Search Guests
+        </a>
+    </div>
+</div>

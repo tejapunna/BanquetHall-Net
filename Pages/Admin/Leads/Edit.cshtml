@@ -1,0 +1,154 @@
+@page "{id:int}"
+@model BanquetHall.Pages.Admin.Leads.EditModel
+@{
+    Layout = "~/Pages/Shared/_AdminLayout.cshtml";
+    ViewData["Title"] = "Edit Lead";
+}
+
+<h3 class="mb-4">Edit Lead</h3>
+
+@if (!string.IsNullOrEmpty(Model.ErrorMessage))
+{
+    <div class="alert alert-danger">@Model.ErrorMessage</div>
+}
+
+<form method="post" asp-route-id="@Model.Input.GuestId">
+    <input type="hidden" asp-for="Input.GuestId" />
+    <input type="hidden" asp-for="Input.FunctionId" />
+
+    <div class="card mb-4">
+        <div class="card-header"><strong>Guest Information</strong></div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-12 col-md-4 mb-3">
+                    <label class="form-label">First Name *</label>
+                    <input asp-for="Input.FirstName" class="form-control" />
+                    <span asp-validation-for="Input.FirstName" class="text-danger"></span>
+                </div>
+                <div class="col-12 col-md-4 mb-3">
+                    <label class="form-label">Last Name *</label>
+                    <input asp-for="Input.LastName" class="form-control" />
+                    <span asp-validation-for="Input.LastName" class="text-danger"></span>
+                </div>
+                <div class="col-12 col-md-4 mb-3">
+                    <label class="form-label">Mobile *</label>
+                    <input asp-for="Input.Mobile" class="form-control" />
+                    <span asp-validation-for="Input.Mobile" class="text-danger"></span>
+                </div>
+                <div class="col-12 col-md-4 mb-3">
+                    <label class="form-label">Email</label>
+                    <input asp-for="Input.Email" class="form-control" />
+                </div>
+                <div class="col-12 col-md-4 mb-3">
+                    <label class="form-label">Village</label>
+                    <input asp-for="Input.Village" class="form-control" />
+                </div>
+                <div class="col-12 col-md-4 mb-3">
+                    <label class="form-label">Mandal</label>
+                    <input asp-for="Input.Mandal" class="form-control" />
+                </div>
+                <div class="col-12 col-md-4 mb-3">
+                    <label class="form-label">Referred By Name</label>
+                    <input asp-for="Input.ReferredByName" class="form-control" />
+                </div>
+                <div class="col-12 col-md-4 mb-3">
+                    <label class="form-label">Referred By Phone</label>
+                    <input asp-for="Input.ReferredByPhone" class="form-control" />
+                </div>
+                <div class="col-12 col-md-4 mb-3">
+                    <label class="form-label">Aadhaar</label>
+                    <input asp-for="Input.GuestAadhaar" class="form-control" />
+                </div>
+                <div class="col-12 col-md-4 mb-3">
+                    <label class="form-label">PAN</label>
+                    <input asp-for="Input.GuestPan" class="form-control" />
+                </div>
+                <div class="col-12 mb-3">
+                    <label class="form-label">Remarks</label>
+                    <textarea asp-for="Input.Remarks" class="form-control" rows="2"></textarea>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card mb-4">
+        <div class="card-header"><strong>Function Details</strong></div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-12 col-md-4 mb-3">
+                    <label class="form-label">Function Date</label>
+                    <input asp-for="Input.FunctionDate" type="date" class="form-control" />
+                </div>
+                <div class="col-12 col-md-4 mb-3">
+                    <label class="form-label">Function Name</label>
+                    <select asp-for="Input.FunctionNameId" class="form-select">
+                        <option value="0">-- Select --</option>
+                        @foreach (var fn in Model.FunctionNames)
+                        {
+                            <option value="@fn.Id">@fn.Name</option>
+                        }
+                    </select>
+                </div>
+                <div class="col-12 col-md-4 mb-3">
+                    <label class="form-label">Function Hall</label>
+                    <select asp-for="Input.FunctionHallId" class="form-select">
+                        <option value="0">-- Select --</option>
+                        @foreach (var fh in Model.FunctionHalls)
+                        {
+                            <option value="@fh.Id">@fh.Name</option>
+                        }
+                    </select>
+                </div>
+                <div class="col-12 col-md-4 mb-3">
+                    <label class="form-label">Meal Type</label>
+                    <select asp-for="Input.MealType" class="form-select">
+                        <option value="">-- Select --</option>
+                        <option value="Veg">Veg</option>
+                        <option value="Non-Veg">Non-Veg</option>
+                    </select>
+                </div>
+                <div class="col-12 col-md-4 mb-3">
+                    <label class="form-label">Meal Plan</label>
+                    <select asp-for="Input.MealPlan" class="form-select">
+                        <option value="">-- Select --</option>
+                        <option value="Breakfast">Breakfast</option>
+                        <option value="Lunch">Lunch</option>
+                        <option value="Dinner">Dinner</option>
+                        <option value="HiTea">Hi-Tea</option>
+                    </select>
+                </div>
+                <div class="col-12 col-md-4 mb-3">
+                    <label class="form-label">Assigned Manager</label>
+                    <select asp-for="Input.AssignedManagerId" class="form-select">
+                        <option value="0">-- Select --</option>
+                        @foreach (var mgr in Model.Managers)
+                        {
+                            <option value="@mgr.Id">@mgr.FullName</option>
+                        }
+                    </select>
+                </div>
+                <div class="col-12 col-md-4 mb-3">
+                    <label class="form-label">No. of Packs</label>
+                    <input asp-for="Input.NoOfPacks" type="number" class="form-control" />
+                </div>
+                <div class="col-12 col-md-4 mb-3">
+                    <label class="form-label">Guaranteed Packs</label>
+                    <input asp-for="Input.GuaranteedPacks" type="number" class="form-control" />
+                </div>
+                <div class="col-12 mb-3">
+                    <label class="form-label">Special Instructions</label>
+                    <textarea asp-for="Input.SpecialInstruction" class="form-control" rows="2"></textarea>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="d-flex gap-2">
+        <button type="submit" class="btn btn-primary">Save Changes</button>
+        <a asp-page="/Admin/Leads/Details" asp-route-id="@Model.Input.GuestId" class="btn btn-secondary">Cancel</a>
+    </div>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

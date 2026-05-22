@@ -1,0 +1,99 @@
+@page
+@model BanquetHall.Pages.Manager.IndexModel
+@{
+    Layout = "~/Pages/Shared/_ManagerLayout.cshtml";
+    ViewData["Title"] = "Manager Dashboard";
+}
+
+<h3 class="mb-4">Welcome, @Model.ManagerName</h3>
+
+<div class="row mb-4">
+    <div class="col-12 col-md-4 mb-3">
+        <div class="card text-white bg-primary">
+            <div class="card-body text-center">
+                <h2>@Model.ActiveLeadsCount</h2>
+                <p class="mb-0">Active Leads</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="mb-4">
+    <a asp-page="/Leads/NewLead" class="btn btn-success me-2">+ New Lead</a>
+    <a asp-page="/Manager/FollowUps/Index" class="btn btn-outline-primary">View Follow-Ups</a>
+</div>
+
+<div class="card">
+    <div class="card-header"><strong>Active Leads</strong></div>
+    <div class="card-body p-0">
+        @if (Model.ActiveLeads.Any())
+        {
+            <div class="table-responsive">
+                <table class="table table-striped table-hover mb-0">
+                    <thead>
+                        <tr>
+                            <th>Guest Name</th>
+                            <th>Phone</th>
+                            <th>Status</th>
+                            <th>Next Follow-Up</th>
+                            <th>Last Followup</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var lead in Model.ActiveLeads)
+                        {
+                            var badgeClass = lead.FollowupStatus switch
+                            {
+                                "May Close" => "bg-info",
+                                "May Not Close" => "bg-warning text-dark",
+                                _ => "bg-secondary"
+                            };
+                            <tr>
+                                <td>@lead.GuestName</td>
+                                <td>@lead.Phone</td>
+                                <td><span class="badge @badgeClass">@lead.FollowupStatus</span></td>
+                                <td>@lead.FollowupDate.ToString("dd-MMM-yyyy")</td>
+                                <td>@lead.LastUpdated.ToString("dd-MMM-yyyy")</td>
+                                <td>
+                                    <a asp-page="/Manager/FollowUps/Edit" asp-route-id="@lead.FollowUpId" class="btn btn-sm btn-primary">Follow Up</a>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+        else
+        {
+            <div class="p-3 text-muted">No active leads. Create a new lead to get started.</div>
+        }
+    </div>
+</div>
+
+@if (Model.IncompleteBookings.Any())
+{
+    <div class="card mt-4">
+        <div class="card-header bg-warning text-dark"><strong>Incomplete Leads (@Model.IncompleteBookings.Count)</strong></div>
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-striped mb-0">
+                    <thead>
+                        <tr><th>Name</th><th>Mobile</th><th>Created</th><th>Actions</th></tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var guest in Model.IncompleteBookings)
+                        {
+                            <tr>
+                                <td>@guest.Name</td>
+                                <td>@guest.Mobile</td>
+                                <td>@guest.CreatedAt.ToString("dd-MMM-yyyy")</td>
+                                <td><a asp-page="/Manager/Leads/Edit" asp-route-id="@guest.Id" class="btn btn-sm btn-warning">Resume</a></td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+}

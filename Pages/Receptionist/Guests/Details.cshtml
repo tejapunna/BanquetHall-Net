@@ -1,0 +1,61 @@
+@page "{id:int}"
+@model BanquetHall.Pages.Receptionist.Guests.DetailsModel
+@{
+    Layout = "~/Pages/Shared/_ReceptionistLayout.cshtml";
+    ViewData["Title"] = "Guest Details";
+}
+<h3>Guest Details</h3>
+
+@if (Model.GuestDetail == null)
+{
+    <div class="alert alert-danger">Guest not found.</div>
+}
+else
+{
+    <div class="card mb-3">
+        <div class="card-body">
+            <div class="row">
+                <div class="col-12 col-md-6">
+                    <p><strong>Name:</strong> @Model.GuestDetail.Name</p>
+                    <p><strong>Mobile:</strong> @Model.GuestDetail.Mobile</p>
+                    <p><strong>Email:</strong> @(Model.GuestDetail.Email ?? "-")</p>
+                </div>
+                <div class="col-12 col-md-6">
+                    <p><strong>Referred By:</strong> @(Model.GuestDetail.ReferredByName ?? "-") @(Model.GuestDetail.ReferredByPhone != null ? $"({Model.GuestDetail.ReferredByPhone})" : "")</p>
+                    <p><strong>Status:</strong> @(Model.GuestDetail.Status ?? "-")</p>
+                    <p><strong>Initiated By:</strong> @(Model.GuestDetail.InitiatedByManager ?? "-")</p>
+                    <p><strong>Current Manager:</strong> @(Model.GuestDetail.CurrentFollowUpManager ?? "-")</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <h5>Function History</h5>
+    @if (Model.GuestDetail.Functions.Any())
+    {
+        <div class="table-responsive">
+            <table class="table table-bordered">
+                <thead><tr><th>Date</th><th>Type</th><th>Meal Plan</th><th>Address</th><th>Aadhaar</th><th>Initiated By</th></tr></thead>
+                <tbody>
+                    @foreach (var fn in Model.GuestDetail.Functions)
+                    {
+                        <tr>
+                            <td>@fn.FunctionDate.ToString("dd-MMM-yyyy")</td>
+                            <td>@fn.FunctionType</td>
+                            <td>@fn.MealPlan</td>
+                            <td>@fn.GuestAddress</td>
+                            <td>@fn.GuestAadhaar</td>
+                            <td>@fn.InitiatedBy</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+    else
+    {
+        <p class="text-muted">No function history available.</p>
+    }
+}
+
+<a asp-page="/Receptionist/Guests/Index" class="btn btn-outline-secondary mt-3">Back to Search</a>

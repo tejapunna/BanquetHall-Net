@@ -1,0 +1,155 @@
+@page "{id:int}"
+@model BanquetHall.Pages.Admin.Guests.DetailsModel
+@{
+    Layout = "~/Pages/Shared/_AdminLayout.cshtml";
+    ViewData["Title"] = "Guest Details";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h3>Guest Details</h3>
+    <a asp-page="/Admin/Guests/Index" class="btn btn-outline-secondary">Back to List</a>
+</div>
+
+<div class="card mb-4">
+    <div class="card-body">
+        <div class="row">
+            <div class="col-12 col-md-6 mb-2">
+                <strong>Name:</strong> @Model.GuestDetail.Name
+            </div>
+            <div class="col-12 col-md-6 mb-2">
+                <strong>Mobile:</strong> @Model.GuestDetail.Mobile
+            </div>
+            <div class="col-12 col-md-6 mb-2">
+                <strong>Email:</strong> @(Model.GuestDetail.Email ?? "-")
+            </div>
+            <div class="col-12 col-md-6 mb-2">
+                <strong>Referred By:</strong> @(Model.GuestDetail.ReferredByName ?? "-")
+            </div>
+            <div class="col-12 col-md-6 mb-2">
+                <strong>Status:</strong>
+                <span class="badge bg-info">@(Model.GuestDetail.Status ?? "N/A")</span>
+            </div>
+            <div class="col-12 col-md-6 mb-2">
+                <strong>Initiated By:</strong> @(Model.GuestDetail.InitiatedByManager ?? "-")
+            </div>
+            <div class="col-12 col-md-6 mb-2">
+                <strong>Current Manager:</strong> @(Model.GuestDetail.CurrentFollowUpManager ?? "-")
+            </div>
+        </div>
+    </div>
+</div>
+
+<h5 class="mb-3">Function History</h5>
+@if (Model.GuestDetail.Functions.Any())
+{
+    <div class="table-responsive mb-4">
+        <table class="table table-striped table-hover">
+            <thead class="table-dark">
+                <tr>
+                    <th>Function Type</th>
+                    <th>Function Date</th>
+                    <th>Meal Plan</th>
+                    <th>Address</th>
+                    <th>Aadhaar</th>
+                    <th>Initiated By</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var f in Model.GuestDetail.Functions)
+                {
+                    <tr>
+                        <td>@f.FunctionType</td>
+                        <td>@f.FunctionDate.ToString("dd-MMM-yyyy")</td>
+                        <td>@f.MealPlan</td>
+                        <td>@(f.GuestAddress ?? "-")</td>
+                        <td>@(f.GuestAadhaar ?? "-")</td>
+                        <td>@(f.InitiatedBy ?? "-")</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}
+else
+{
+    <div class="alert alert-info mb-4">No functions recorded.</div>
+}
+
+<h5 class="mb-3">Payments</h5>
+@if (Model.Payments.Any())
+{
+    <div class="table-responsive mb-4">
+        <table class="table table-striped table-hover">
+            <thead class="table-dark">
+                <tr>
+                    <th>Amount</th>
+                    <th>Advance</th>
+                    <th>Remaining</th>
+                    <th>Payment Type</th>
+                    <th>Date</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var p in Model.Payments)
+                {
+                    <tr>
+                        <td>₹@p.Amount.ToString("N2")</td>
+                        <td>₹@p.AdvanceAmount.ToString("N2")</td>
+                        <td class="@(p.RemainingAmount > 0 ? "text-danger fw-bold" : "")">₹@p.RemainingAmount.ToString("N2")</td>
+                        <td>@p.PaymentType</td>
+                        <td>@p.CreatedAt.ToString("dd-MMM-yyyy")</td>
+                        <td>
+                            @if (p.RemainingAmount > 0)
+                            {
+                                <span class="badge bg-warning text-dark">Pending</span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-success">Paid</span>
+                            }
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}
+else
+{
+    <div class="alert alert-info mb-4">No payments recorded.</div>
+}
+
+<h5 class="mb-3">Follow-Up History</h5>
+@if (Model.FollowUps.Any())
+{
+    <div class="table-responsive">
+        <table class="table table-striped table-hover">
+            <thead class="table-dark">
+                <tr>
+                    <th>Manager</th>
+                    <th>Status</th>
+                    <th>Follow-Up Status</th>
+                    <th>Date</th>
+                    <th>Remarks</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var fu in Model.FollowUps)
+                {
+                    <tr>
+                        <td>@(fu.Manager?.FullName ?? "-")</td>
+                        <td><span class="badge bg-secondary">@fu.Status</span></td>
+                        <td><span class="badge bg-info">@fu.FollowupStatus</span></td>
+                        <td>@fu.FollowupDate.ToString("dd-MMM-yyyy")</td>
+                        <td>@(fu.Remarks ?? "-")</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}
+else
+{
+    <div class="alert alert-info">No follow-ups recorded.</div>
+}

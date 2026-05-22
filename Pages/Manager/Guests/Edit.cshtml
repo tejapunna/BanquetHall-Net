@@ -1,0 +1,70 @@
+@page "{id:int}"
+@model BanquetHall.Pages.Manager.Guests.EditModel
+@{
+    Layout = "~/Pages/Shared/_ManagerLayout.cshtml";
+    ViewData["Title"] = "Edit Guest";
+}
+
+<h3 class="mb-3">Edit Guest</h3>
+
+@if (!string.IsNullOrEmpty(Model.ErrorMessage))
+{
+    <div class="alert alert-danger">@Model.ErrorMessage</div>
+}
+
+<div class="card">
+    <div class="card-body">
+        <form method="post" asp-route-id="@Model.GuestId">
+            <div class="row">
+                <div class="col-12 col-md-6 mb-3">
+                    <label asp-for="GuestDto.Name" class="form-label">Name <span class="text-danger">*</span></label>
+                    <input asp-for="GuestDto.Name" class="form-control" />
+                    <span asp-validation-for="GuestDto.Name" class="text-danger"></span>
+                </div>
+                <div class="col-12 col-md-6 mb-3">
+                    <label asp-for="GuestDto.Mobile" class="form-label">Mobile <span class="text-danger">*</span></label>
+                    <input asp-for="GuestDto.Mobile" class="form-control" />
+                    <span asp-validation-for="GuestDto.Mobile" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-12 col-md-6 mb-3">
+                    <label asp-for="GuestDto.Email" class="form-label">Email</label>
+                    <input asp-for="GuestDto.Email" class="form-control" />
+                    <span asp-validation-for="GuestDto.Email" class="text-danger"></span>
+                </div>
+                <div class="col-12 col-md-6 mb-3">
+                    <label asp-for="GuestDto.Status" class="form-label">Status</label>
+                    <select asp-for="GuestDto.Status" class="form-select">
+                        <option value="">-- Select --</option>
+                        <option value="New">New</option>
+                        <option value="Active">Active</option>
+                        <option value="Confirmed">Confirmed</option>
+                        <option value="Cancelled">Cancelled</option>
+                    </select>
+                    <span asp-validation-for="GuestDto.Status" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-12 col-md-6 mb-3">
+                    <label asp-for="GuestDto.ReferredByName" class="form-label">Referred By Name</label>
+                    <input asp-for="GuestDto.ReferredByName" class="form-control" />
+                    <span asp-validation-for="GuestDto.ReferredByName" class="text-danger"></span>
+                </div>
+                <div class="col-12 col-md-6 mb-3">
+                    <label asp-for="GuestDto.ReferredByPhone" class="form-label">Referred By Phone</label>
+                    <input asp-for="GuestDto.ReferredByPhone" class="form-control" />
+                    <span asp-validation-for="GuestDto.ReferredByPhone" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="d-flex justify-content-between">
+                <a asp-page="/Manager/Guests/Index" class="btn btn-secondary">Cancel</a>
+                <button type="submit" class="btn btn-primary">Save Changes</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

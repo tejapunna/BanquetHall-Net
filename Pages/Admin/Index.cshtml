@@ -1,0 +1,51 @@
+@page
+@model BanquetHall.Pages.Admin.IndexModel
+@{
+    ViewData["Title"] = "Admin Dashboard";
+    Layout = "~/Pages/Shared/_AdminLayout.cshtml";
+}
+
+<h2>Dashboard</h2>
+
+<div class="row mb-4">
+    <div class="col-12 col-md-4 mb-3">
+        <div class="card text-white bg-info">
+            <div class="card-body">
+                <h5 class="card-title">Total Guests</h5>
+                <p class="card-text display-6">@Model.TotalGuests</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-12 col-md-4 mb-3">
+        <div class="card text-white bg-warning">
+            <div class="card-body">
+                <h5 class="card-title">Active Leads</h5>
+                <p class="card-text display-6">@Model.ActiveLeads</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-12 col-md-4 mb-3">
+        <div class="card text-white bg-success">
+            <div class="card-body">
+                <h5 class="card-title">Today's Revenue</h5>
+                <p class="card-text display-6">₹@Model.TodayRevenue.ToString("N2")</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<h4>Quick Links</h4>
+<div class="row">
+    <div class="col-6 col-md-3 mb-2">
+        <a asp-page="/Admin/Users/Index" class="btn btn-outline-primary w-100">Manage Users</a>
+    </div>
+    <div class="col-6 col-md-3 mb-2">
+        <a asp-page="/Admin/Reports/Revenue" class="btn btn-outline-success w-100">Revenue Reports</a>
+    </div>
+    <div class="col-6 col-md-3 mb-2">
+        <a asp-page="/Admin/Leads/Transfer" class="btn btn-outline-warning w-100">Lead Transfer</a>
+    </div>
+    <div class="col-6 col-md-3 mb-2">
+        <a asp-page="/Admin/ActivityLogs/Index" class="btn btn-outline-secondary w-100">Activity Logs</a>
+    </div>
+</div>

@@ -1,0 +1,49 @@
+@page
+@model BanquetHall.Pages.Manager.Guests.IndexModel
+@{
+    Layout = "~/Pages/Shared/_ManagerLayout.cshtml";
+    ViewData["Title"] = "My Guests";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h3>My Guests</h3>
+    <a asp-page="/Manager/Booking/Wizard" class="btn btn-primary">+ New Booking</a>
+</div>
+
+@if (Model.Guests.Any())
+{
+    <div class="table-responsive">
+        <table class="table table-striped table-hover">
+            <thead class="table-dark">
+                <tr>
+                    <th>Name</th>
+                    <th>Mobile</th>
+                    <th>Email</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var guest in Model.Guests)
+                {
+                    <tr>
+                        <td>@guest.Name</td>
+                        <td>@guest.Mobile</td>
+                        <td>@(guest.Email ?? "-")</td>
+                        <td>
+                            <span class="badge bg-info">@(guest.Status ?? "N/A")</span>
+                        </td>
+                        <td>
+                            <a asp-page="/Manager/Guests/Details" asp-route-id="@guest.Id" class="btn btn-sm btn-outline-secondary">View Details</a>
+                            <a asp-page="/Manager/Guests/Edit" asp-route-id="@guest.Id" class="btn btn-sm btn-outline-primary">Edit</a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}
+else
+{
+    <div class="alert alert-info">No guests found. Start by creating a new booking.</div>
+}

@@ -1,0 +1,73 @@
+@page "{id:int}"
+@model BanquetHall.Pages.Manager.Payments.CollectModel
+@{
+    Layout = "~/Pages/Shared/_ManagerLayout.cshtml";
+    ViewData["Title"] = "Collect Payment";
+}
+
+<h3 class="mb-4">Collect Remaining Payment</h3>
+
+@if (!string.IsNullOrEmpty(Model.SuccessMessage))
+{
+    <div class="alert alert-success">@Model.SuccessMessage</div>
+}
+@if (!string.IsNullOrEmpty(Model.ErrorMessage))
+{
+    <div class="alert alert-danger">@Model.ErrorMessage</div>
+}
+
+@if (Model.PaymentRecord != null)
+{
+    <div class="card mb-4">
+        <div class="card-header">Payment Summary</div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-12 col-md-4 mb-2">
+                    <strong>Total Amount:</strong> ₹@Model.PaymentRecord.Amount.ToString("N2")
+                </div>
+                <div class="col-12 col-md-4 mb-2">
+                    <strong>Already Paid:</strong> ₹@Model.PaymentRecord.AdvanceAmount.ToString("N2")
+                </div>
+                <div class="col-12 col-md-4 mb-2">
+                    <strong>Remaining:</strong> <span class="text-danger fw-bold">₹@Model.PaymentRecord.RemainingAmount.ToString("N2")</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    @if (Model.PaymentRecord.RemainingAmount > 0 && string.IsNullOrEmpty(Model.ErrorMessage))
+    {
+        <div class="card">
+            <div class="card-header">Collect Payment</div>
+            <div class="card-body">
+                <form method="post" asp-route-id="@Model.PaymentRecord.Id">
+                    <div class="row">
+                        <div class="col-12 col-md-6 mb-3">
+                            <label class="form-label">Amount to Collect <span class="text-danger">*</span></label>
+                            <input asp-for="AmountCollected" type="number" step="0.01" min="0.01" max="@Model.PaymentRecord.RemainingAmount" class="form-control" required />
+                        </div>
+                        <div class="col-12 col-md-6 mb-3">
+                            <label class="form-label">Payment Type <span class="text-danger">*</span></label>
+                            <select asp-for="PaymentType" class="form-select">
+                                <option value="Cash">Cash</option>
+                                <option value="UPI">UPI</option>
+                                <option value="Card">Card</option>
+                            </select>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-success">Collect Payment</button>
+                    <a asp-page="/Manager/Payments/Index" class="btn btn-secondary ms-2">Back</a>
+                </form>
+            </div>
+        </div>
+    }
+    else if (Model.PaymentRecord.RemainingAmount <= 0)
+    {
+        <div class="alert alert-success">This payment is fully settled.</div>
+        <a asp-page="/Manager/Payments/Index" class="btn btn-secondary">Back to Payments</a>
+    }
+    else
+    {
+        <a asp-page="/Manager/Payments/Index" class="btn btn-secondary">Back to Payments</a>
+    }
+}

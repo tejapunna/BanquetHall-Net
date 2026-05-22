@@ -1,0 +1,135 @@
+@page
+@model BanquetHall.Pages.Admin.Leads.TransferModel
+@{
+    Layout = "~/Pages/Shared/_AdminLayout.cshtml";
+    ViewData["Title"] = "Lead Transfer";
+}
+
+<h3 class="mb-4">Lead Transfer</h3>
+
+@if (!string.IsNullOrEmpty(Model.SuccessMessage))
+{
+    <div class="alert alert-success alert-dismissible fade show">
+        @Model.SuccessMessage
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+}
+@if (!string.IsNullOrEmpty(Model.ErrorMessage))
+{
+    <div class="alert alert-danger alert-dismissible fade show">
+        @Model.ErrorMessage
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+}
+
+@* Step 1: Select Source Manager *@
+<div class="card mb-4">
+    <div class="card-header">Step 1: Select Source Manager</div>
+    <div class="card-body">
+        <form method="post" asp-page-handler="LoadLeads">
+            <div class="row align-items-end">
+                <div class="col-12 col-md-8 mb-3">
+                    <label class="form-label">Source Manager</label>
+                    <select asp-for="SourceManagerId" class="form-select">
+                        <option value="0">-- Select Manager --</option>
+                        @foreach (var mgr in Model.Managers)
+                        {
+                            <option value="@mgr.Id" selected="@(mgr.Id == Model.SourceManagerId)">@mgr.FullName (@mgr.Username)</option>
+                        }
+                    </select>
+                </div>
+                <div class="col-12 col-md-4 mb-3">
+                    <button type="submit" class="btn btn-primary w-100">Load Leads</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+@* Step 2: Select Leads & Target *@
+@if (Model.SourceLeads.Any())
+{
+    <form method="post" asp-page-handler="Transfer">
+        <input type="hidden" asp-for="SourceManagerId" />
+
+        <div class="card mb-4">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <span>Step 2: Select Leads (@Model.SourceLeads.Count active)</span>
+                <div class="form-check">
+                    <input type="checkbox" asp-for="TransferAll" class="form-check-input" id="transferAll" />
+                    <label class="form-check-label" for="transferAll">Transfer All</label>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-striped table-hover">
+                        <thead class="table-dark">
+                            <tr>
+                                <th><input type="checkbox" id="selectAllLeads" /></th>
+                                <th>Guest</th>
+                                <th>Status</th>
+                                <th>Follow-up Status</th>
+                                <th>Date</th>
+                                <th>Remarks</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var lead in Model.SourceLeads)
+                            {
+                                <tr>
+                                    <td><input type="checkbox" name="SelectedLeadIds" value="@lead.Id" class="lead-checkbox" /></td>
+                                    <td>@lead.Guest?.Name</td>
+                                    <td><span class="badge bg-info">@lead.Status</span></td>
+                                    <td><span class="badge bg-warning text-dark">@lead.FollowupStatus</span></td>
+                                    <td>@lead.FollowupDate.ToString("dd-MMM-yyyy")</td>
+                                    <td>@(lead.Remarks?.Length > 30 ? lead.Remarks[..30] + "..." : lead.Remarks)</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-header">Step 3: Select Target Manager & Transfer</div>
+            <div class="card-body">
+                <div class="row align-items-end">
+                    <div class="col-12 col-md-8 mb-3">
+                        <label class="form-label">Target Manager</label>
+                        <select asp-for="TargetManagerId" class="form-select">
+                            <option value="0">-- Select Target Manager --</option>
+                            @foreach (var mgr in Model.Managers.Where(m => m.Id != Model.SourceManagerId))
+                            {
+                                <option value="@mgr.Id">@mgr.FullName (@mgr.Username)</option>
+                            }
+                        </select>
+                    </div>
+                    <div class="col-12 col-md-4 mb-3">
+                        <button type="submit" class="btn btn-danger w-100">Transfer Leads</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+}
+else if (Model.SourceManagerId > 0)
+{
+    <div class="alert alert-info">No active leads found for the selected manager.</div>
+}
+
+@section Scripts {
+<script>
+    // Select All checkbox
+    document.getElementById('selectAllLeads')?.addEventListener('change', function() {
+        document.querySelectorAll('.lead-checkbox').forEach(cb => cb.checked = this.checked);
+    });
+    // Transfer All unchecks individual selections
+    document.getElementById('transferAll')?.addEventListener('change', function() {
+        if (this.checked) {
+            document.querySelectorAll('.lead-checkbox').forEach(cb => cb.checked = false);
+            document.getElementById('selectAllLeads').checked = false;
+        }
+    });
+</script>
+}

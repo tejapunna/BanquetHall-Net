@@ -1,0 +1,81 @@
+@page
+@model BanquetHall.Pages.Admin.Reports.ManagerWiseModel
+@{
+    ViewData["Title"] = "Manager-Wise Report";
+    Layout = "~/Pages/Shared/_AdminLayout.cshtml";
+}
+
+<h2>Manager-Wise Report</h2>
+
+<form method="get" class="row g-3 mb-4">
+    <div class="col-12 col-md-3">
+        <label asp-for="Filter.FilterType" class="form-label">Filter Type</label>
+        <select asp-for="Filter.FilterType" class="form-select" onchange="toggleDateInputs(this.value)">
+            <option value="Today">Today</option>
+            <option value="ThisWeek">This Week</option>
+            <option value="ThisMonth">This Month</option>
+            <option value="FinancialYear">Financial Year</option>
+            <option value="ExactDate">Exact Date</option>
+            <option value="Custom">Custom Range</option>
+        </select>
+    </div>
+    <div class="col-12 col-md-3" id="exactDateGroup" style="display:none;">
+        <label asp-for="Filter.ExactDate" class="form-label">Date</label>
+        <input asp-for="Filter.ExactDate" type="date" class="form-control" />
+    </div>
+    <div class="col-12 col-md-3" id="fromDateGroup" style="display:none;">
+        <label asp-for="Filter.FromDate" class="form-label">From Date</label>
+        <input asp-for="Filter.FromDate" type="date" class="form-control" />
+    </div>
+    <div class="col-12 col-md-3" id="toDateGroup" style="display:none;">
+        <label asp-for="Filter.ToDate" class="form-label">To Date</label>
+        <input asp-for="Filter.ToDate" type="date" class="form-control" />
+    </div>
+    <div class="col-12">
+        <button type="submit" class="btn btn-primary">Apply Filter</button>
+    </div>
+</form>
+
+@if (Model.ManagerReports.Any())
+{
+    <div class="table-responsive">
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Manager Name</th>
+                    <th>Total Revenue</th>
+                    <th>Follow-Up Count</th>
+                    <th>Daily Activities</th>
+                    <th>Conversion Rate</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var report in Model.ManagerReports)
+                {
+                    <tr>
+                        <td>@report.ManagerName</td>
+                        <td>₹@report.TotalRevenue.ToString("N2")</td>
+                        <td>@report.FollowUpCount</td>
+                        <td>@report.DailyActivities</td>
+                        <td>@report.ConversionRate.ToString("N1")%</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}
+else
+{
+    <div class="alert alert-info">No manager data found.</div>
+}
+
+@section Scripts {
+    <script>
+        function toggleDateInputs(value) {
+            document.getElementById('exactDateGroup').style.display = value === 'ExactDate' ? '' : 'none';
+            document.getElementById('fromDateGroup').style.display = value === 'Custom' ? '' : 'none';
+            document.getElementById('toDateGroup').style.display = value === 'Custom' ? '' : 'none';
+        }
+        toggleDateInputs(document.querySelector('[name="Filter.FilterType"]').value);
+    </script>
+}

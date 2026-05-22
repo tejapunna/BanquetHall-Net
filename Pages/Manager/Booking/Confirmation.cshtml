@@ -1,0 +1,159 @@
+@page
+@model BanquetHall.Pages.Manager.Booking.ConfirmationModel
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Booking Confirmation</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            padding: 20px;
+        }
+        .company-header {
+            text-align: center;
+            border-bottom: 2px solid #333;
+            padding-bottom: 15px;
+            margin-bottom: 25px;
+        }
+        .company-header h2 {
+            margin-bottom: 5px;
+            color: #333;
+        }
+        .section-title {
+            background-color: #f8f9fa;
+            padding: 8px 12px;
+            border-left: 4px solid #0d6efd;
+            margin-bottom: 15px;
+            font-weight: bold;
+        }
+        .detail-row {
+            margin-bottom: 8px;
+        }
+        .detail-label {
+            font-weight: 600;
+            color: #555;
+        }
+        .print-btn {
+            margin-bottom: 20px;
+        }
+        @@media print {
+            .no-print {
+                display: none !important;
+            }
+            body {
+                padding: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="no-print print-btn">
+            <button onclick="window.print()" class="btn btn-primary">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-printer me-1" viewBox="0 0 16 16">
+                    <path d="M2.5 8a.5.5 0 1 0 0-1 .5.5 0 0 0 0 1z"/>
+                    <path d="M5 1a2 2 0 0 0-2 2v2H2a2 2 0 0 0-2 2v3a2 2 0 0 0 2 2h1v1a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2v-1h1a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-1V3a2 2 0 0 0-2-2H5zM4 3a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v2H4V3zm1 10a1 1 0 0 1-1-1v-2h8v2a1 1 0 0 1-1 1H5z"/>
+                </svg>
+                Print
+            </button>
+            <a href="/Manager" class="btn btn-outline-secondary ms-2">Back to Dashboard</a>
+        </div>
+
+        <div class="company-header">
+            <h2>Banquet Hall Management</h2>
+            <p class="text-muted mb-0">Booking Confirmation</p>
+        </div>
+
+        <div class="section-title">Guest Details</div>
+        <div class="row mb-4">
+            <div class="col-12 col-md-6 detail-row">
+                <span class="detail-label">Name:</span> @Model.Guest.Name
+            </div>
+            <div class="col-12 col-md-6 detail-row">
+                <span class="detail-label">Mobile:</span> @Model.Guest.Mobile
+            </div>
+            <div class="col-12 col-md-6 detail-row">
+                <span class="detail-label">Email:</span> @(Model.Guest.Email ?? "-")
+            </div>
+            <div class="col-12 col-md-6 detail-row">
+                <span class="detail-label">Referred By:</span> @(Model.Guest.ReferredByName ?? "-")
+            </div>
+        </div>
+
+        <div class="section-title">Function Details</div>
+        <div class="row mb-4">
+            <div class="col-12 col-md-6 detail-row">
+                <span class="detail-label">Function Type:</span> @Model.Function.FunctionType
+            </div>
+            <div class="col-12 col-md-6 detail-row">
+                <span class="detail-label">Function Date:</span> @Model.Function.FunctionDate.ToString("dd-MMM-yyyy")
+            </div>
+            <div class="col-12 col-md-6 detail-row">
+                <span class="detail-label">Meal Plan:</span> @Model.Function.MealPlan
+            </div>
+            <div class="col-12 col-md-6 detail-row">
+                <span class="detail-label">Address:</span> @(Model.Function.GuestAddress ?? "-")
+            </div>
+            <div class="col-12 col-md-6 detail-row">
+                <span class="detail-label">Initiated By:</span> @(Model.Function.InitiatedBy ?? "-")
+            </div>
+        </div>
+
+        @if (Model.Payment != null)
+        {
+            <div class="section-title">Payment Summary</div>
+            <div class="row mb-4">
+                <div class="col-12 col-md-6 detail-row">
+                    <span class="detail-label">Total Amount:</span> ₹@Model.Payment.Amount.ToString("N2")
+                </div>
+                <div class="col-12 col-md-6 detail-row">
+                    <span class="detail-label">Payment Type:</span> @Model.Payment.PaymentType
+                </div>
+                <div class="col-12 col-md-6 detail-row">
+                    <span class="detail-label">No. of Packs:</span> @Model.Payment.NoOfPacks
+                </div>
+                <div class="col-12 col-md-6 detail-row">
+                    <span class="detail-label">Price Per Pack:</span> ₹@Model.Payment.PricePerPack.ToString("N2")
+                </div>
+                <div class="col-12 col-md-6 detail-row">
+                    <span class="detail-label">Advance Paid:</span> ₹@Model.Payment.AdvanceAmount.ToString("N2")
+                </div>
+                <div class="col-12 col-md-6 detail-row">
+                    <span class="detail-label">Remaining:</span> ₹@Model.Payment.RemainingAmount.ToString("N2")
+                </div>
+            </div>
+        }
+
+        @if (Model.LatestFollowUp != null)
+        {
+            <div class="section-title">Follow-Up Status</div>
+            <div class="row mb-4">
+                <div class="col-12 col-md-6 detail-row">
+                    <span class="detail-label">Status:</span> @Model.LatestFollowUp.Status
+                </div>
+                <div class="col-12 col-md-6 detail-row">
+                    <span class="detail-label">Follow-Up Status:</span> @Model.LatestFollowUp.FollowupStatus
+                </div>
+                <div class="col-12 col-md-6 detail-row">
+                    <span class="detail-label">Follow-Up Date:</span> @Model.LatestFollowUp.FollowupDate.ToString("dd-MMM-yyyy")
+                </div>
+                <div class="col-12 col-md-6 detail-row">
+                    <span class="detail-label">Remarks:</span> @(Model.LatestFollowUp.Remarks ?? "-")
+                </div>
+            </div>
+        }
+
+        <hr />
+        <p class="text-muted text-center small">
+            Generated on @DateTime.Now.ToString("dd-MMM-yyyy hh:mm tt") | Banquet Hall Management System
+        </p>
+    </div>
+</body>
+</html>

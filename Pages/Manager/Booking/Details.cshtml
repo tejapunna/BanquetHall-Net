@@ -1,0 +1,248 @@
+@page "{id:int}"
+@model BanquetHall.Pages.Manager.Booking.DetailsModel
+@{
+    Layout = "~/Pages/Shared/_ManagerLayout.cshtml";
+    ViewData["Title"] = "Booking Details";
+}
+
+<!-- Back link -->
+<div class="mb-4">
+    <a asp-page="/Manager/Reports/MyPerformance" class="text-decoration-none text-purple fw-semibold">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16" class="me-1">
+            <path fill-rule="evenodd" d="M15 8a.5.5 0 0 0-.5-.5H2.707l3.147-3.146a.5.5 0 1 0-.708-.708l-4 4a.5.5 0 0 0 0 .708l4 4a.5.5 0 0 0 .708-.708L2.707 8.5H14.5A.5.5 0 0 0 15 8"/>
+        </svg>
+        Back to My Reports
+    </a>
+</div>
+
+<!-- Guest Info & Function Details -->
+<div class="row mb-4">
+    <!-- Guest Information -->
+    <div class="col-12 col-md-6 mb-3">
+        <div class="card-custom">
+            <div class="card-header-custom">
+                <span>Guest Information</span>
+                <span class="badge-custom badge-purple">ID #@Model.Guest.Id</span>
+            </div>
+            <div class="card-body-custom">
+                <div class="row">
+                    <div class="col-6 mb-3">
+                        <div class="detail-label">Name</div>
+                        <div class="detail-value">@Model.Guest.Name</div>
+                    </div>
+                    <div class="col-6 mb-3">
+                        <div class="detail-label">Mobile</div>
+                        <div class="detail-value">@Model.Guest.Mobile</div>
+                    </div>
+                    <div class="col-6 mb-3">
+                        <div class="detail-label">Email</div>
+                        <div class="detail-value">@(Model.Guest.Email ?? "—")</div>
+                    </div>
+                    <div class="col-6 mb-3">
+                        <div class="detail-label">Status</div>
+                        <div class="detail-value">
+                            @{
+                                var statusBadge = Model.Guest.Status switch
+                                {
+                                    "Success" => "badge-green",
+                                    "Failed" => "badge-red",
+                                    "Active" => "badge-blue",
+                                    _ => "badge-gray"
+                                };
+                            }
+                            <span class="badge-custom @statusBadge">@(Model.Guest.Status ?? "Unknown")</span>
+                        </div>
+                    </div>
+                    @if (!string.IsNullOrEmpty(Model.Guest.ReferredByName))
+                    {
+                        <div class="col-6 mb-3">
+                            <div class="detail-label">Referred By</div>
+                            <div class="detail-value">@Model.Guest.ReferredByName</div>
+                        </div>
+                        <div class="col-6 mb-3">
+                            <div class="detail-label">Referrer Phone</div>
+                            <div class="detail-value">@(Model.Guest.ReferredByPhone ?? "—")</div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Function Details -->
+    <div class="col-12 col-md-6 mb-3">
+        <div class="card-custom">
+            <div class="card-header-custom">
+                <span>Function Details</span>
+                <span class="badge-custom badge-teal">@Model.Booking.FunctionType</span>
+            </div>
+            <div class="card-body-custom">
+                <div class="row">
+                    <div class="col-6 mb-3">
+                        <div class="detail-label">Function Date</div>
+                        <div class="detail-value">@Model.Booking.FunctionDate.ToString("dd MMM yyyy")</div>
+                    </div>
+                    <div class="col-6 mb-3">
+                        <div class="detail-label">Meal Plan</div>
+                        <div class="detail-value">@Model.Booking.MealPlan</div>
+                    </div>
+                    <div class="col-6 mb-3">
+                        <div class="detail-label">Initiated By</div>
+                        <div class="detail-value">@(Model.Booking.InitiatedBy ?? "—")</div>
+                    </div>
+                    <div class="col-6 mb-3">
+                        <div class="detail-label">Aadhaar</div>
+                        <div class="detail-value">@(Model.Booking.GuestAadhaar ?? "—")</div>
+                    </div>
+                    <div class="col-12 mb-3">
+                        <div class="detail-label">Address</div>
+                        <div class="detail-value">@(Model.Booking.GuestAddress ?? "—")</div>
+                    </div>
+                    <div class="col-6">
+                        <div class="detail-label">Booking Created</div>
+                        <div class="detail-value">@Model.Booking.CreatedAt.ToString("dd MMM yyyy, hh:mm tt")</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Payment & Follow-Up -->
+<div class="row mb-4">
+    <!-- Payment Summary -->
+    <div class="col-12 col-md-6 mb-3">
+        <div class="card-custom">
+            <div class="card-header-custom">
+                <span>Payment Summary</span>
+                @if (Model.Payment != null)
+                {
+                    <span class="badge-custom badge-green">Recorded</span>
+                }
+                else
+                {
+                    <span class="badge-custom badge-yellow">Pending</span>
+                }
+            </div>
+            <div class="card-body-custom">
+                @if (Model.Payment != null)
+                {
+                    <div class="row">
+                        <div class="col-6 mb-3">
+                            <div class="stat-card" style="border: none; box-shadow: none; padding: 0;">
+                                <div class="stat-label">Total Amount</div>
+                                <div class="stat-value text-purple">₹@Model.Payment.Amount.ToString("N0")</div>
+                            </div>
+                        </div>
+                        <div class="col-6 mb-3">
+                            <div class="stat-card" style="border: none; box-shadow: none; padding: 0;">
+                                <div class="stat-label">Remaining</div>
+                                <div class="stat-value" style="color: var(--danger);">₹@Model.Payment.RemainingAmount.ToString("N0")</div>
+                            </div>
+                        </div>
+                        <div class="col-6 mb-3">
+                            <div class="detail-label">Payment Type</div>
+                            <div class="detail-value">@Model.Payment.PaymentType</div>
+                        </div>
+                        <div class="col-6 mb-3">
+                            <div class="detail-label">No. of Packs</div>
+                            <div class="detail-value">@Model.Payment.NoOfPacks</div>
+                        </div>
+                        <div class="col-6 mb-3">
+                            <div class="detail-label">Guaranteed Packs</div>
+                            <div class="detail-value">@Model.Payment.GuaranteedPacks</div>
+                        </div>
+                        <div class="col-6 mb-3">
+                            <div class="detail-label">Price Per Pack</div>
+                            <div class="detail-value">₹@Model.Payment.PricePerPack.ToString("N0")</div>
+                        </div>
+                        <div class="col-6 mb-3">
+                            <div class="detail-label">Advance Paid</div>
+                            <div class="detail-value">
+                                @if (Model.Payment.AdvancePaid)
+                                {
+                                    <span class="badge-custom badge-green">Yes — ₹@Model.Payment.AdvanceAmount.ToString("N0")</span>
+                                }
+                                else
+                                {
+                                    <span class="badge-custom badge-red">No</span>
+                                }
+                            </div>
+                        </div>
+                        <div class="col-6 mb-3">
+                            <div class="detail-label">Payment Date</div>
+                            <div class="detail-value">@Model.Payment.CreatedAt.ToString("dd MMM yyyy")</div>
+                        </div>
+                    </div>
+                }
+                else
+                {
+                    <p class="text-muted mb-0">No payment record found for this booking.</p>
+                }
+            </div>
+        </div>
+    </div>
+
+    <!-- Follow-Up Status -->
+    <div class="col-12 col-md-6 mb-3">
+        <div class="card-custom">
+            <div class="card-header-custom">
+                <span>Latest Follow-Up</span>
+                @if (Model.LatestFollowUp != null)
+                {
+                    var fuBadge = Model.LatestFollowUp.FollowupStatus switch
+                    {
+                        "Success" => "badge-green",
+                        "Failed" => "badge-red",
+                        "May Close" => "badge-blue",
+                        _ => "badge-yellow"
+                    };
+                    <span class="badge-custom @fuBadge">@Model.LatestFollowUp.FollowupStatus</span>
+                }
+            </div>
+            <div class="card-body-custom">
+                @if (Model.LatestFollowUp != null)
+                {
+                    <div class="row">
+                        <div class="col-6 mb-3">
+                            <div class="detail-label">Status</div>
+                            <div class="detail-value">@Model.LatestFollowUp.Status</div>
+                        </div>
+                        <div class="col-6 mb-3">
+                            <div class="detail-label">Follow-Up Status</div>
+                            <div class="detail-value">@Model.LatestFollowUp.FollowupStatus</div>
+                        </div>
+                        <div class="col-6 mb-3">
+                            <div class="detail-label">Follow-Up Date</div>
+                            <div class="detail-value">@Model.LatestFollowUp.FollowupDate.ToString("dd MMM yyyy")</div>
+                        </div>
+                        <div class="col-6 mb-3">
+                            <div class="detail-label">Last Updated</div>
+                            <div class="detail-value">@Model.LatestFollowUp.UpdatedAt.ToString("dd MMM yyyy")</div>
+                        </div>
+                        <div class="col-12">
+                            <div class="detail-label">Remarks</div>
+                            <div class="detail-value">@(Model.LatestFollowUp.Remarks ?? "—")</div>
+                        </div>
+                    </div>
+                }
+                else
+                {
+                    <p class="text-muted mb-0">No follow-up records found for this guest.</p>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Actions -->
+<div class="d-flex gap-3">
+    <a asp-page="/Manager/Booking/Confirmation" asp-route-id="@Model.Booking.Id" class="btn-primary-custom text-decoration-none">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16" class="me-1">
+            <path d="M5 1a2 2 0 0 0-2 2v1h10V3a2 2 0 0 0-2-2zm6 8H5a1 1 0 0 0-1 1v3a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1v-3a1 1 0 0 0-1-1"/>
+            <path d="M0 7a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2zm2.5 1a.5.5 0 1 0 0-1 .5.5 0 0 0 0 1"/>
+        </svg>
+        Print Confirmation
+    </a>
+    <a asp-page="/Manager/Reports/MyPerformance" class="btn btn-outline-secondary">Back to Reports</a>
+</div>

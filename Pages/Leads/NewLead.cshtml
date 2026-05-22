@@ -1,0 +1,211 @@
+@page
+@model BanquetHall.Pages.Leads.NewLeadModel
+@{
+    var userRole = User.FindFirst(System.Security.Claims.ClaimTypes.Role)?.Value;
+    if (userRole == "Receptionist")
+    {
+        Layout = "~/Pages/Shared/_ReceptionistLayout.cshtml";
+    }
+    else
+    {
+        Layout = "~/Pages/Shared/_ManagerLayout.cshtml";
+    }
+    ViewData["Title"] = "New Lead";
+}
+
+@Html.AntiForgeryToken()
+
+<partial name="_GuestSearchPartial" />
+
+<div id="stepIndicator">
+    <div class="d-flex justify-content-center mb-4">
+        <div class="d-flex align-items-center">
+            <div class="text-center mx-2">
+                <span class="badge rounded-pill bg-primary p-2 step-badge" data-step="1" style="width: 30px; height: 30px; line-height: 16px;">1</span>
+                <div class="small mt-1 fw-bold step-label" data-step="1">Guest Info</div>
+            </div>
+            <div class="border-top border-secondary step-connector" data-after="1" style="width: 40px; margin-top: -10px;"></div>
+            <div class="text-center mx-2">
+                <span class="badge rounded-pill bg-secondary p-2 step-badge" data-step="2" style="width: 30px; height: 30px; line-height: 16px;">2</span>
+                <div class="small mt-1 step-label" data-step="2">Function</div>
+            </div>
+            <div class="border-top border-secondary step-connector" data-after="2" style="width: 40px; margin-top: -10px;"></div>
+            <div class="text-center mx-2">
+                <span class="badge rounded-pill bg-secondary p-2 step-badge" data-step="3" style="width: 30px; height: 30px; line-height: 16px;">3</span>
+                <div class="small mt-1 step-label" data-step="3">Summary</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="step1" class="wizard-step">
+    <div class="card">
+        <div class="card-header"><strong>Step 1: Guest Information</strong></div>
+        <div class="card-body">
+            <form id="guestForm">
+                <div class="row">
+                    <div class="col-12 col-md-6 mb-3"><label class="form-label">First Name *</label><input type="text" id="guestFirstName" name="FirstName" class="form-control" required /><div class="invalid-feedback"></div></div>
+                    <div class="col-12 col-md-6 mb-3"><label class="form-label">Last Name *</label><input type="text" id="guestLastName" name="LastName" class="form-control" required /><div class="invalid-feedback"></div></div>
+                </div>
+                <div class="row">
+                    <div class="col-12 col-md-6 mb-3"><label class="form-label">Mobile *</label><input type="text" id="guestMobile" name="Mobile" class="form-control" required /><div class="invalid-feedback"></div></div>
+                    <div class="col-12 col-md-6 mb-3"><label class="form-label">Email</label><input type="email" id="guestEmail" name="Email" class="form-control" /><div class="invalid-feedback"></div></div>
+                </div>
+                <div class="row">
+                    <div class="col-12 col-md-6 mb-3"><label class="form-label">Village</label><input type="text" id="guestVillage" name="Village" class="form-control" /><div class="invalid-feedback"></div></div>
+                    <div class="col-12 col-md-6 mb-3"><label class="form-label">Mandal</label><input type="text" id="guestMandal" name="Mandal" class="form-control" /><div class="invalid-feedback"></div></div>
+                </div>
+                <div class="row">
+                    <div class="col-12 col-md-6 mb-3"><label class="form-label">Referred By Name</label><input type="text" id="guestReferredByName" name="ReferredByName" class="form-control" /><div class="invalid-feedback"></div></div>
+                    <div class="col-12 col-md-6 mb-3"><label class="form-label">Referred By Phone</label><input type="text" id="guestReferredByPhone" name="ReferredByPhone" class="form-control" /><div class="invalid-feedback"></div></div>
+                </div>
+                <div class="row">
+                    <div class="col-12 col-md-6 mb-3"><label class="form-label">Aadhaar</label><input type="text" id="guestAadhaar" name="GuestAadhaar" class="form-control" maxlength="12" /><div class="invalid-feedback"></div></div>
+                    <div class="col-12 col-md-6 mb-3"><label class="form-label">PAN</label><input type="text" id="guestPan" name="GuestPan" class="form-control" maxlength="10" /><div class="invalid-feedback"></div></div>
+                </div>
+                <div class="mb-3"><label class="form-label">Remarks</label><textarea id="guestRemarks" name="Remarks" class="form-control" rows="2"></textarea><div class="invalid-feedback"></div></div>
+                <div class="d-flex justify-content-end"><button type="submit" class="btn btn-primary">Next: Function Details &rarr;</button></div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div id="step2" class="wizard-step" style="display: none;">
+    <div class="card">
+        <div class="card-header"><strong>Step 2: Function Details</strong></div>
+        <div class="card-body">
+            <form id="functionForm">
+                <div class="row">
+                    <div class="col-12 col-md-6 mb-3"><label class="form-label">Function Date *</label><input type="date" id="functionDate" name="FunctionDate" class="form-control" required /><div class="invalid-feedback"></div></div>
+                    <div class="col-12 col-md-6 mb-3"><label class="form-label">Function Name *</label><select id="functionNameId" name="FunctionNameId" class="form-select" required><option value="">-- Loading... --</option></select><div class="invalid-feedback"></div></div>
+                </div>
+                <div class="row">
+                    <div class="col-12 col-md-6 mb-3">
+                        <label class="form-label">Meal Type *</label>
+                        <div class="mt-1">
+                            <div class="form-check form-check-inline"><input class="form-check-input" type="radio" name="MealType" id="mealTypeVeg" value="Veg" required /><label class="form-check-label" for="mealTypeVeg">Veg</label></div>
+                            <div class="form-check form-check-inline"><input class="form-check-input" type="radio" name="MealType" id="mealTypeNonVeg" value="Non-Veg" /><label class="form-check-label" for="mealTypeNonVeg">Non-Veg</label></div>
+                        </div>
+                    </div>
+                    <div class="col-12 col-md-6 mb-3"><label class="form-label">Meal Plan *</label><select id="mealPlan" name="MealPlan" class="form-select" required><option value="">-- Select --</option><option value="Breakfast">Breakfast</option><option value="Lunch">Lunch</option><option value="Dinner">Dinner</option><option value="HiTea">Hi-Tea</option></select><div class="invalid-feedback"></div></div>
+                </div>
+                <div class="row">
+                    <div class="col-12 col-md-6 mb-3"><label class="form-label">No. of Packs</label><input type="number" id="noOfPacks" name="NoOfPacks" class="form-control" min="0" value="0" /></div>
+                    <div class="col-12 col-md-6 mb-3"><label class="form-label">Guaranteed Packs</label><input type="number" id="guaranteedPacks" name="GuaranteedPacks" class="form-control" min="0" value="0" /></div>
+                </div>
+                <div class="row">
+                    <div class="col-12 col-md-6 mb-3"><label class="form-label">Assigned Manager *</label><select id="assignedManagerId" name="AssignedManagerId" class="form-select" required><option value="">-- Loading... --</option></select><div class="invalid-feedback"></div></div>
+                    <div class="col-12 col-md-6 mb-3"><label class="form-label">Function Hall *</label><select id="functionHallId" name="FunctionHallId" class="form-select" required><option value="">-- Loading... --</option></select><div class="invalid-feedback"></div></div>
+                </div>
+                <div class="mb-3"><label class="form-label">Special Instructions</label><textarea id="specialInstruction" name="SpecialInstruction" class="form-control" rows="2"></textarea></div>
+                <div class="d-flex justify-content-between">
+                    <button type="button" class="btn btn-secondary btn-back" data-target="1">&larr; Back</button>
+                    <button type="submit" class="btn btn-primary">Create Lead &rarr;</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div id="step3" class="wizard-step" style="display: none;">
+    <div class="card border-success">
+        <div class="card-header bg-success text-white"><strong>Lead Created Successfully!</strong></div>
+        <div class="card-body">
+            <div id="leadSummary"></div>
+            <div class="mt-3 d-flex gap-2">
+                <button type="button" class="btn btn-outline-primary" id="btnPrintSummary">Print</button>
+                <a href="/Leads/NewLead" class="btn btn-primary">New Lead</a>
+                <a href="/" class="btn btn-outline-secondary">Dashboard</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="~/js/smart-autofill.js"></script>
+    <script>
+    $(document).ready(function () {
+        let currentStep = 1, guestId = null, functionId = null, guestData = {}, functionData = {};
+        var baseUrl = '/Leads/NewLead';
+
+        loadDropdown(baseUrl + '?handler=FunctionNames', '#functionNameId');
+        loadDropdown(baseUrl + '?handler=FunctionHalls', '#functionHallId');
+        $.getJSON(baseUrl + '?handler=Managers', function(data) {
+            var s = $('#assignedManagerId').empty().append('<option value="">-- Select --</option>');
+            data.forEach(function(i) { s.append('<option value="'+i.id+'">'+i.fullName+'</option>'); });
+        });
+
+        function loadDropdown(url, sel) {
+            $.getJSON(url, function(data) {
+                var s = $(sel).empty().append('<option value="">-- Select --</option>');
+                data.forEach(function(i) { s.append('<option value="'+i.id+'">'+i.name+'</option>'); });
+            });
+        }
+
+        function showStep(s) { $('.wizard-step').hide(); $('#step'+s).show(); currentStep=s; updateIndicator(s); }
+        function updateIndicator(s) {
+            for(var i=1;i<=3;i++){
+                var b=$('.step-badge[data-step="'+i+'"]'),l=$('.step-label[data-step="'+i+'"]'),c=$('.step-connector[data-after="'+i+'"]');
+                b.removeClass('bg-primary bg-success bg-secondary'); l.removeClass('fw-bold');
+                if(i===s){b.addClass('bg-primary');l.addClass('fw-bold');}
+                else if(i<s){b.addClass('bg-success');if(c.length)c.removeClass('border-secondary').addClass('border-success');}
+                else{b.addClass('bg-secondary');if(c.length)c.removeClass('border-success').addClass('border-secondary');}
+            }
+        }
+        function clearErrors(f){$(f).find('.is-invalid').removeClass('is-invalid');$(f).find('.invalid-feedback').text('');}
+        function showErrors(f,e){clearErrors(f);if(e){Object.keys(e).forEach(function(k){var inp=$(f).find('[name="'+k+'"]');if(inp.length){inp.addClass('is-invalid');inp.siblings('.invalid-feedback').text(e[k].join(', '));}});if(e.General)alert(e.General.join('\n'));}}
+
+        $(document).on('click','.btn-back',function(){showStep(parseInt($(this).data('target')));});
+
+        $('#guestForm').on('submit',function(e){
+            e.preventDefault(); clearErrors(this);
+            var d={firstName:$('#guestFirstName').val(),lastName:$('#guestLastName').val(),mobile:$('#guestMobile').val(),email:$('#guestEmail').val()||null,village:$('#guestVillage').val()||null,mandal:$('#guestMandal').val()||null,referredByName:$('#guestReferredByName').val()||null,referredByPhone:$('#guestReferredByPhone').val()||null,guestAadhaar:$('#guestAadhaar').val()||null,guestPan:$('#guestPan').val()||null,remarks:$('#guestRemarks').val()||null};
+            $.ajax({url:baseUrl+'?handler=Step1',type:'POST',contentType:'application/json',data:JSON.stringify(d),
+                success:function(r){if(r.success){guestId=r.data.guestId;guestData=d;showStep(2);}else showErrors('#guestForm',r.errors);},
+                error:function(){alert('An error occurred.');}
+            });
+        });
+
+        $('#functionForm').on('submit',function(e){
+            e.preventDefault(); clearErrors(this);
+            var mt=$('input[name="MealType"]:checked').val()||'';
+            var d={guestId:guestId,functionDate:$('#functionDate').val(),functionNameId:parseInt($('#functionNameId').val())||0,mealType:mt,mealPlan:$('#mealPlan').val(),noOfPacks:parseInt($('#noOfPacks').val())||0,guaranteedPacks:parseInt($('#guaranteedPacks').val())||0,specialInstruction:$('#specialInstruction').val()||null,assignedManagerId:parseInt($('#assignedManagerId').val())||0,functionHallId:parseInt($('#functionHallId').val())||0};
+            $.ajax({url:baseUrl+'?handler=Step2',type:'POST',contentType:'application/json',data:JSON.stringify(d),
+                success:function(r){if(r.success){functionId=r.data.functionId;functionData=d;showSummary();}else showErrors('#functionForm',r.errors);},
+                error:function(){alert('An error occurred.');}
+            });
+        });
+
+        function showSummary(){
+            showStep(3);
+            var fnName=$('#functionNameId option:selected').text(),fhName=$('#functionHallId option:selected').text(),mgrName=$('#assignedManagerId option:selected').text();
+            var h='<h6>Guest Information</h6><table class="table table-bordered table-sm">';
+            h+='<tr><th>Name</th><td>'+esc(guestData.firstName+' '+guestData.lastName)+'</td></tr>';
+            h+='<tr><th>Mobile</th><td>'+esc(guestData.mobile)+'</td></tr>';
+            if(guestData.email)h+='<tr><th>Email</th><td>'+esc(guestData.email)+'</td></tr>';
+            if(guestData.village)h+='<tr><th>Village</th><td>'+esc(guestData.village)+'</td></tr>';
+            if(guestData.mandal)h+='<tr><th>Mandal</th><td>'+esc(guestData.mandal)+'</td></tr>';
+            if(guestData.referredByName)h+='<tr><th>Referred By</th><td>'+esc(guestData.referredByName)+'</td></tr>';
+            h+='</table><h6 class="mt-3">Function Details</h6><table class="table table-bordered table-sm">';
+            h+='<tr><th>Function</th><td>'+esc(fnName)+'</td></tr>';
+            h+='<tr><th>Date</th><td>'+esc(functionData.functionDate)+'</td></tr>';
+            h+='<tr><th>Hall</th><td>'+esc(fhName)+'</td></tr>';
+            h+='<tr><th>Meal</th><td>'+esc(functionData.mealType)+' - '+esc(functionData.mealPlan)+'</td></tr>';
+            h+='<tr><th>Packs</th><td>'+functionData.noOfPacks+' (Guaranteed: '+functionData.guaranteedPacks+')</td></tr>';
+            h+='<tr><th>Manager</th><td>'+esc(mgrName)+'</td></tr>';
+            if(functionData.specialInstruction)h+='<tr><th>Instructions</th><td>'+esc(functionData.specialInstruction)+'</td></tr>';
+            h+='</table>';
+            $('#leadSummary').html(h);
+        }
+
+        $('#btnPrintSummary').on('click',function(){
+            var w=window.open('','_blank');
+            w.document.write('<html><head><title>Lead Summary</title><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"></head><body class="p-4"><h4>Lead Summary</h4>'+$('#leadSummary').html()+'</body></html>');
+            w.document.close(); w.onload=function(){w.print();};
+        });
+
+        function esc(s){return s?$('<div>').text(s).html():'';}
+        showStep(1);
+    });
+    </script>
+}

@@ -1,0 +1,185 @@
+@page
+@model BanquetHall.Pages.Manager.Payments.IndexModel
+@{
+    Layout = "~/Pages/Shared/_ManagerLayout.cshtml";
+    ViewData["Title"] = "Payment Tracking";
+}
+
+<h3 class="mb-4">Payment Tracking</h3>
+
+<div class="row mb-4">
+    <div class="col-12 col-md-4 mb-3">
+        <div class="card text-white bg-warning">
+            <div class="card-body text-center">
+                <h4>₹@Model.TotalPending.ToString("N2")</h4>
+                <p class="mb-0">Total Pending</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-12 col-md-4 mb-3">
+        <div class="card text-white bg-success">
+            <div class="card-body text-center">
+                <h4>₹@Model.TotalCollected.ToString("N2")</h4>
+                <p class="mb-0">Total Collected</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-12 col-md-4 mb-3">
+        <div class="card text-white bg-danger">
+            <div class="card-body text-center">
+                <h4>@Model.CancelledPayments.Count</h4>
+                <p class="mb-0">Cancelled Bookings</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+@* Pending Payments *@
+@if (Model.PendingPayments.Any())
+{
+    <div class="card mb-4">
+        <div class="card-header bg-warning text-dark">
+            <h5 class="mb-0">Pending Payments (@Model.PendingPayments.Count)</h5>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-striped table-hover">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>Guest</th>
+                            <th>Function</th>
+                            <th>Total</th>
+                            <th>Advance</th>
+                            <th>Remaining</th>
+                            <th>Lead Status</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model.PendingPayments)
+                        {
+                            var p = item.Payment;
+                            <tr>
+                                <td>@(p.Guest?.Name ?? "-")</td>
+                                <td>@(p.Function?.FunctionType ?? "-") - @(p.Function?.FunctionDate.ToString("dd-MMM-yyyy") ?? "-")</td>
+                                <td>₹@p.Amount.ToString("N2")</td>
+                                <td>₹@p.AdvanceAmount.ToString("N2")</td>
+                                <td class="text-danger fw-bold">₹@p.RemainingAmount.ToString("N2")</td>
+                                <td>
+                                    @{
+                                        var statusBadge = item.FollowupStatus switch
+                                        {
+                                            "Success" => "bg-success",
+                                            "Failed" => "bg-danger",
+                                            "May Close" => "bg-info",
+                                            _ => "bg-warning text-dark"
+                                        };
+                                    }
+                                    <span class="badge @statusBadge">@item.FollowupStatus</span>
+                                </td>
+                                <td>
+                                    @if (item.CanCollect)
+                                    {
+                                        <a asp-page="/Manager/Payments/Collect" asp-route-id="@p.Id" class="btn btn-sm btn-success">Collect</a>
+                                    }
+                                    else if (item.FollowupStatus == "Success")
+                                    {
+                                        <span class="text-muted small">Fully Paid</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted small">Awaiting Confirmation</span>
+                                    }
+                                    <a asp-page="/Manager/Payments/Cancel" asp-route-id="@p.Id" class="btn btn-sm btn-outline-danger ms-1">Cancel</a>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+}
+
+@* Completed Payments *@
+@if (Model.CompletedPayments.Any())
+{
+    <div class="card mb-4">
+        <div class="card-header bg-success text-white">
+            <h5 class="mb-0">Fully Paid (@Model.CompletedPayments.Count)</h5>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-striped table-hover">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>Guest</th>
+                            <th>Function</th>
+                            <th>Total Amount</th>
+                            <th>Payment Type</th>
+                            <th>Date</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model.CompletedPayments)
+                        {
+                            var p = item.Payment;
+                            <tr>
+                                <td>@(p.Guest?.Name ?? "-")</td>
+                                <td>@(p.Function?.FunctionType ?? "-") - @(p.Function?.FunctionDate.ToString("dd-MMM-yyyy") ?? "-")</td>
+                                <td class="text-success fw-bold">₹@p.Amount.ToString("N2")</td>
+                                <td><span class="badge bg-secondary">@p.PaymentType</span></td>
+                                <td>@p.CreatedAt.ToString("dd-MMM-yyyy")</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+}
+
+@* Cancelled Bookings *@
+@if (Model.CancelledPayments.Any())
+{
+    <div class="card">
+        <div class="card-header bg-danger text-white">
+            <h5 class="mb-0">Cancelled Bookings (@Model.CancelledPayments.Count)</h5>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-striped table-hover">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>Guest</th>
+                            <th>Function</th>
+                            <th>Total</th>
+                            <th>Advance Was</th>
+                            <th>Date</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model.CancelledPayments)
+                        {
+                            var p = item.Payment;
+                            <tr>
+                                <td>@(p.Guest?.Name ?? "-")</td>
+                                <td>@(p.Function?.FunctionType ?? "-") - @(p.Function?.FunctionDate.ToString("dd-MMM-yyyy") ?? "-")</td>
+                                <td>₹@p.Amount.ToString("N2")</td>
+                                <td>₹@p.AdvanceAmount.ToString("N2")</td>
+                                <td>@p.CreatedAt.ToString("dd-MMM-yyyy")</td>
+                                <td><span class="badge bg-danger">Cancelled</span></td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+}
+
+@if (!Model.PendingPayments.Any() && !Model.CompletedPayments.Any() && !Model.CancelledPayments.Any())
+{
+    <div class="alert alert-info">No payment records found.</div>
+}
